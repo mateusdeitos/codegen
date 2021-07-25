@@ -13,6 +13,9 @@ module.exports = {
 		}
 	],
 	config: {
-		refsAllowed: ['Olá']
+		refsAllowed: ['Olá'],
+		enums: {
+			IntegracaoEcommerceEnum: 'erp/Ecommerce/teste.php'
+		}
 	}
 }

@@ -4,6 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-	  "codegen": "node ../lib/src/index.js"
+    "codegen": "node ../lib/src/index.js"
+  },
+  "dependencies": {
+    "hygen": "^6.1.0"
   }
 }
