@@ -14,13 +14,19 @@ export class Script {
 	private scriptPath: string;
 
 	constructor(scriptPath: string) {
-		if (!existsSync(scriptPath)) {
+		let script = null;
+		if (existsSync(resolve(process.cwd(), scriptPath))) {
+			script = require(resolve(process.cwd(), scriptPath));
+			this.scriptPath = resolve(process.cwd(), scriptPath);
+		} else if(existsSync(resolve(process.cwd(), scriptPath))) {
+			script = require(resolve(process.cwd(), scriptPath));
+			this.scriptPath = resolve(process.cwd(), scriptPath);
+		}
+
+		if (!script) {
 			throw new Error(`Script ${scriptPath} not found`);
 		}
 
-		const script = require(scriptPath);
-
-		this.scriptPath = scriptPath;
 		this.config = new InitialConfig();
 		this.config.extend({
 			pathToTemplates: resolve(this.scriptPath, '..', TemplateResolver.templatesFolder),
@@ -41,8 +47,10 @@ export class Script {
 		Object.entries(enums).forEach(([k, v]) => {
 			if (typeof v === 'function') {
 				parsedEnums[k] = v(this.config.getConfig());
-			} else if (typeof v === 'string') {
+			} else if (typeof v === 'string' && v.endsWith(".php")) {
 				parsedEnums[k] = parse.phpEnum(resolve(this.scriptPath, '..', v));
+			} else if (typeof v === 'object') {
+				parsedEnums[k] = v;
 			}
 		});
 

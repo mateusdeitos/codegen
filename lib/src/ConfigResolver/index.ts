@@ -1,6 +1,6 @@
 import { Script } from "../Script";
 import { InitialConfig } from "src/config/InitialConfig";
-import { Prompter } from "src/Prompter";
+import { Prompter } from "../Prompter";
 
 export class ConfigResolver {
 	constructor(private config: InitialConfig) { }
