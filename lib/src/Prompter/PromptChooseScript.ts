@@ -16,7 +16,7 @@ export class PromptChooseScript implements PromptInterface {
 				choices: this.scripts.map(script => {
 					return {
 						name: script,
-						value: join(process.cwd(), script, this.config.get('scriptDefaultName'))
+						value: join(script, this.config.get('scriptDefaultName'))
 					}
 				})
 			}

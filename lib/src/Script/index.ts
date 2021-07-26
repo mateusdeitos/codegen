@@ -4,43 +4,50 @@ import { parse } from '../helpers/parsing.helpers';
 import { resolve } from 'path';
 import { Prompt } from './types';
 import { Answers } from 'inquirer';
+import { InitialConfig } from '../config/InitialConfig';
+import { TemplateResolver } from './TemplateResolver';
 
 export class Script {
 
 	private config: Config;
 	private prompts: Prompt.PromptQuestion[];
 	private scriptPath: string;
-	private templatesPath: string;
 
 	constructor(scriptPath: string) {
 		if (!existsSync(scriptPath)) {
 			throw new Error(`Script ${scriptPath} not found`);
 		}
-		this.scriptPath = scriptPath;
-		this.config = new Config();
 
 		const script = require(scriptPath);
-		this.config.extend(script?.config);
+
+		this.scriptPath = scriptPath;
+		this.config = new InitialConfig();
+		this.config.extend({
+			pathToTemplates: resolve(this.scriptPath, '..', TemplateResolver.templatesFolder),
+			...script?.config
+		});
 		this.prompts = script?.prompts || [];
-		this.templatesPath = script?.templatesPath || "";
 		this.initConfig();
 	}
 
 
 	private initConfig() {
-		if (!this.config) return;
+		if (!(this.config instanceof Config)) return;
 		this.evalConfigEnums();
 	}
 
 	private evalConfigEnums() {
 		const enums = this.config.get('enums') || {};
+		let parsedEnums = {};
 		Object.entries(enums).forEach(([k, v]) => {
 			if (typeof v === 'function') {
-				enums[k] = v(this.config);
+				parsedEnums[k] = v(this.config.getConfig());
 			} else if (typeof v === 'string') {
-				enums[k] = parse.phpEnum(resolve(process.cwd(), v));
+				parsedEnums[k] = parse.phpEnum(resolve(this.scriptPath, '..', v));
 			}
 		});
+
+		this.config.extend({ enums: parsedEnums });
 	}
 
 	public getConfig = () => {
@@ -72,7 +79,7 @@ export class Script {
 			let parsedAnswer = value;
 			const parser = parsers[key];
 			if (parser) {
-				let result = parser(value, this.config);
+				let result = parser(value, this.config.getConfig());
 				if (typeof result === 'string') {
 					parsedAnswer = result;
 				}
@@ -88,9 +95,13 @@ export class Script {
 	}
 
 	public getTemplatesPath() {
-		if (this.templatesPath) return this.templatesPath;
+		if (!this.config.has('pathToTemplates')) {
+			throw new Error("Path to templates folder not defined");
+		};
 
-		return resolve(this.scriptPath, '..', '_templates');
+		return this.config.get('pathToTemplates')
+
+
 	}
 
 }
