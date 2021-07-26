@@ -1,6 +1,6 @@
 {
+	"version": "1.0.1",
 	"name": "codegen-mateusdeitos",
-	"version": "1.0.0",
 	"description": "A package to easily generate code files",
 	"repository": {
 		"url": "https://github.com/mateusdeitos/codegen"
