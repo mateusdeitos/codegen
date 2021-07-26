@@ -1,9 +1,16 @@
 {
-	"name": "codegen",
+	"name": "codegen-mateusdeitos",
 	"version": "1.0.0",
+	"description": "A package to easily generate code files",
+	"repository": {
+		"url": "https://github.com/mateusdeitos/codegen"
+	},
 	"main": "./lib/dist/index.js",
 	"bin": {
 		"codegen": "./lib/dist/index.js"
+	},
+	"scripts": {
+		"build": "yarn tsc"
 	},
 	"license": "MIT",
 	"dependencies": {
@@ -15,5 +22,11 @@
 		"@types/inquirer": "^7.3.3",
 		"@types/node": "^16.4.2",
 		"typescript": "^4.3.5"
-	}
+	},
+	"keywords": [
+		"codegen",
+		"code-generator",
+		"hygen",
+		"inquirer"
+	]
 }
