@@ -14,7 +14,7 @@ export class InitialConfig extends Config {
 		}
 
 		this.extend({
-			rootDir: path.resolve(process.cwd(), '..'),
+			rootDir: path.join(process.cwd(), '.codegen'),
 			scriptDefaultName: 'codegen.js',
 			...config
 		});

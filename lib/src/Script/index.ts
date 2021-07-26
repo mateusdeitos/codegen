@@ -6,6 +6,7 @@ import { Prompt } from './types';
 import { Answers } from 'inquirer';
 import { InitialConfig } from '../config/InitialConfig';
 import { TemplateResolver } from './TemplateResolver';
+import { join } from 'path';
 
 export class Script {
 
@@ -15,12 +16,12 @@ export class Script {
 
 	constructor(scriptPath: string) {
 		let script = null;
-		if (existsSync(resolve(process.cwd(), scriptPath))) {
-			script = require(resolve(process.cwd(), scriptPath));
-			this.scriptPath = resolve(process.cwd(), scriptPath);
-		} else if(existsSync(resolve(process.cwd(), scriptPath))) {
-			script = require(resolve(process.cwd(), scriptPath));
-			this.scriptPath = resolve(process.cwd(), scriptPath);
+		if (existsSync(join(process.cwd(), scriptPath))) {
+			script = require(join(process.cwd(), scriptPath));
+			this.scriptPath = join(process.cwd(), scriptPath);
+		} else if(existsSync(join(process.cwd(), scriptPath))) {
+			script = require(join(process.cwd(), scriptPath));
+			this.scriptPath = join(process.cwd(), scriptPath);
 		}
 
 		if (!script) {
