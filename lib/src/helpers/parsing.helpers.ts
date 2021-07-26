@@ -1,8 +1,7 @@
-const { existsSync, readFileSync } = require('fs');
-const engine = require('php-parser');
-const { resolve } = require('path');
+import { existsSync, readFileSync } from 'fs';
+import Engine from 'php-parser';
 
-module.exports.parse = {
+export const parse = {
 	argumentsToObject: function (args = []) {
 		let result = {};
 		args.forEach(function (arg) {
@@ -15,7 +14,8 @@ module.exports.parse = {
 	},
 
 	phpEnum: function (phpFile = "") {
-		const phpParser = new engine({
+		//@ts-ignore
+		const phpParser = new Engine({
 			parser: {
 				php7: true
 			},
@@ -32,7 +32,7 @@ module.exports.parse = {
 				throw new Error("Invalid parsing result");
 			}
 
-			const parsedEnum = parsed.children[0].body.reduce((acc, constante) => {
+			const parsedEnum = parsed?.children[0]?.body?.reduce((acc, constante) => {
 				const { constants } = constante;
 				const { name } = constants[0].name;
 				const { value } = constants[0].value;
