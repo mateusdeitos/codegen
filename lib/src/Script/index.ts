@@ -55,8 +55,28 @@ export class Script {
 	};
 
 	public getPrompts = () => {
-		return this.prompts;
+		return this.parsePrompts(this.prompts);
 	};
+
+	private parsePrompts = (prompts: Prompt.PromptQuestion[]) => {
+		return prompts.map(prompt => {
+			return {
+				...prompt,
+				validate: this.parseValidatePrompt(prompt.validate),
+				default: this.config.get(prompt.name)
+			};
+		});
+	}
+
+	private parseValidatePrompt(validate: Prompt.PromptQuestion["validate"]) {
+		if (typeof validate === 'function') {
+			return (input: string, answers: Answers) => {
+				return validate(input, answers, this.config.getConfig());
+			};
+		}
+
+		return null;
+	}
 
 	private isValidParser = (parser: Prompt.PromptQuestion["parser"]) => {
 		return !!parser && typeof parser === 'function';

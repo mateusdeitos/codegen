@@ -4,6 +4,13 @@ module.exports = {
 			name: 'ref',
 			type: 'text',
 			message: 'Defina a ref da plataforma',
+			validate: (ref, answers, config) => {
+				if (!config.refsAllowed.includes(ref)) {
+					return `A ref ${ref} não é permitida`;
+				}
+
+				return true;
+			},
 			parser: (ref, config) => {
 				if (ref && config.refsAllowed.includes(ref)) {
 					return ref.toUpperCase();
@@ -13,9 +20,9 @@ module.exports = {
 		}
 	],
 	config: {
-		refsAllowed: ['Olá'],
+		refsAllowed: ['EcommerceE', 'EcommerceF'],
 		enums: {
-			IntegracaoEcommerceEnum: 'teste.php'
+			IntegracaoEcommerceEnum: 'EcommerceEnum.php'
 		}
 	}
 }
