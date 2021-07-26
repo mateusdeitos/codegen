@@ -1,13 +1,12 @@
 {
 	"name": "codegen",
 	"version": "1.0.0",
-	"main": "./dist/index.js",
+	"main": "./lib/dist/index.js",
 	"bin": {
-		"codegen": "./dist/index.js"
+		"codegen": "./lib/dist/index.js"
 	},
 	"license": "MIT",
 	"dependencies": {
-		
 		"hygen": "^6.1.0",
 		"inquirer": "^8.1.2",
 		"php-parser": "^3.0.3"

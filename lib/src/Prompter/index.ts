@@ -1,6 +1,6 @@
 import inquirer from "inquirer";
-import { InitialConfig } from "src/config/InitialConfig";
-import { Prompt } from "src/Script/types";
+import { InitialConfig } from "../config/InitialConfig";
+import { Prompt } from "../Script/types";
 import { PromptChooseScript } from "./PromptChooseScript";
 
 type ReturnPrompt = {

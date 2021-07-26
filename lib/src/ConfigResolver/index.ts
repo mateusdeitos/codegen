@@ -1,5 +1,5 @@
 import { Script } from "../Script";
-import { InitialConfig } from "src/config/InitialConfig";
+import { InitialConfig } from "../config/InitialConfig";
 import { Prompter } from "../Prompter";
 
 export class ConfigResolver {

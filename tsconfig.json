@@ -6,7 +6,7 @@
 		"target": "es6",
 		"moduleResolution": "node",
 		"sourceMap": true,
-		"outDir": "dist",
+		"outDir": "lib/dist",
 		"baseUrl": ".",
 		"esModuleInterop": true,
 		"declaration": true,
@@ -15,6 +15,6 @@
 		"experimentalDecorators": true,
 	},
 	"include": [
-		"src/**/*"
+		"lib/src/**/*"
 	]
 }
