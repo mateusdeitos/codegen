@@ -11,10 +11,7 @@ module.exports = {
 
 				return true;
 			},
-			parser: (ref, config) => {
-				if (ref && config.refsAllowed.includes(ref)) {
-					return ref.toUpperCase();
-				}
+			parser: (ref, answers, config) => {
 				return ref;
 			}
 		}

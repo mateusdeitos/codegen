@@ -5,8 +5,5 @@
   "license": "MIT",
   "scripts": {
     "codegen": "cd ../lib && yarn tsc && node dist/index.js"
-  },
-  "dependencies": {
-    "hygen": "^6.1.0"
   }
 }

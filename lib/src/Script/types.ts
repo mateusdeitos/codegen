@@ -1,6 +1,6 @@
 
 export namespace Prompt {
-	export type Parser = (value: string, config: Record<string, unknown>) => string;
+	export type Parser<T = any> = (value: string, answers: T, config: Record<string, unknown>) => string;
 	export type Choice = {
 		name: string;
 		value: string;

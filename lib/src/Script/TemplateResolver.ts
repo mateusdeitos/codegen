@@ -30,7 +30,7 @@ export class TemplateResolver {
 		const templatesPath = resolve(this.templatesPath);
 		const hygenPath = resolve(templatesPath, '..', '..');
 		const [hygenAction] = resolve(templatesPath, '..').split(sep).reverse();
-		const command = `HYGEN_TMPLS=${hygenPath} yarn --silent hygen ${hygenAction} ${TemplateResolver.templatesFolder} ${args}`;
+		const command = `HYGEN_TMPLS=${hygenPath} ./node_modules/.bin/hygen ${hygenAction} ${TemplateResolver.templatesFolder} ${args}`;
 		return exec(command);
 	}
 

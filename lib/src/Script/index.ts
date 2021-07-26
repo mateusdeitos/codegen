@@ -30,7 +30,6 @@ export class Script {
 		this.initConfig();
 	}
 
-
 	private initConfig() {
 		if (!(this.config instanceof Config)) return;
 		this.evalConfigEnums();
@@ -99,7 +98,7 @@ export class Script {
 			let parsedAnswer = value;
 			const parser = parsers[key];
 			if (parser) {
-				let result = parser(value, this.config.getConfig());
+				let result = parser(value, answers, this.config.getConfig());
 				if (typeof result === 'string') {
 					parsedAnswer = result;
 				}

@@ -4,11 +4,7 @@ import { TemplateResolver } from '../Script/TemplateResolver';
 
 export class Runner {
 
-	private script: Script;
-
-	constructor(scriptFile: string) {
-		this.script = new Script(scriptFile);
-	}
+	constructor(private script: Script) {}
 
 	public async run() {
 		console.log(`running file ${this.script.getScriptPath()}`);
