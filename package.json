@@ -1,13 +1,13 @@
 {
-	"version": "1.0.7",
+	"version": "1.0.8",
 	"name": "codegen-mateusdeitos",
 	"description": "A package to easily generate code files",
 	"repository": {
 		"url": "https://github.com/mateusdeitos/codegen"
 	},
-	"main": "./lib/dist/index.js",
+	"main": "./dist/index.js",
 	"bin": {
-		"codegen": "./lib/dist/index.js"
+		"codegen": "./dist/index.js"
 	},
 	"scripts": {
 		"build": "yarn tsc"
