@@ -76,7 +76,7 @@ export class Script {
 
 	private parsePrompts = (prompts: BasePrompt[]) => {
 		return prompts.map(prompt => {
-			prompt.parseValidate(this.config);
+			prompt.parseMethods(this.config);
 			return {
 				...prompt.getPrompt(),
 			};

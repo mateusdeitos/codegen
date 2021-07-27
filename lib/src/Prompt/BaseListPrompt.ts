@@ -1,8 +1,10 @@
+import { Answers } from "inquirer";
+import { Config } from "../config";
 import { Prompt } from "../Script/types";
 import { BasePrompt } from "./BasePrompt";
 
 export abstract class BaseListPrompt extends BasePrompt {
-	protected choices?: Prompt.Choice[];
+	protected choices?: Prompt.Choices;
 
 	constructor(name: Prompt.PromptQuestion["name"], type: Prompt.PromptQuestion["type"], message: Prompt.PromptQuestion["message"], defaultValue: Prompt.PromptQuestion["default"] = "") {
 		super(name, type, message, defaultValue);
@@ -14,6 +16,15 @@ export abstract class BaseListPrompt extends BasePrompt {
 
 	public setChoices(choices: Prompt.PromptQuestion["choices"]) {
 		this.choices = choices;
+	}
+
+	public parseChoices(config: Config) {
+		if (typeof this.choices === 'function') {
+			const clone = this.choices;
+			this.setChoices((answers: Answers) => {
+				return clone(answers, config.getConfig())
+			});
+		}
 	}
 
 	public getPrompt(): Prompt.PromptQuestion {
