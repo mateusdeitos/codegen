@@ -1,5 +1,5 @@
 import inquirer from "inquirer";
-import { InitialConfig } from "../config/InitialConfig";
+import { InitialConfig } from "../Config/InitialConfig";
 import { Prompt } from "../Script/types";
 import { PromptChooseScript } from "./PromptChooseScript";
 

@@ -7,6 +7,6 @@
     "codegen-mateusdeitos": "^1.0.1"
   },
   "scripts": {
-    "codegen-local": "cd ../lib && yarn tsc && node dist/index.js"
+    "codegen-local": "cd ../ && yarn tsc && node dist/index.js"
   }
 }

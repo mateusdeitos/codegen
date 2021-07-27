@@ -1,4 +1,4 @@
-import { existsSync, readdirSync } from 'fs';
+import { Dirent, existsSync, readdirSync } from 'fs';
 import path from 'path';
 import { Config } from '.';
 
@@ -59,14 +59,18 @@ export class InitialConfig extends Config {
 			throw new Error("Root directory does not exist");
 		};
 
+		const isInsideNodeModules = (file: Dirent) => {
+			return file.name.includes('node_modules');
+		}
+
 		const readRecursive = (dir: string): string[] => {
 			const files = [];
 			readdirSync(dir, { withFileTypes: true }).forEach((file) => {
-				if (file.isDirectory()) {
+				if (file.isDirectory() && !isInsideNodeModules(file)) {
 					files.push(...readRecursive(path.join(dir, file.name)));
 				}
 
-				if (file.name === this.get('scriptDefaultName')) {
+				if (file.name === this.get('scriptDefaultName') && !isInsideNodeModules(file)) {
 					files.push(path.join(dir, file.name));
 				}
 

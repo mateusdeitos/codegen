@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-import { InitialConfig } from './config/InitialConfig';
+import { InitialConfig } from './Config/InitialConfig';
 import { parse } from './helpers/parsing.helpers';
 import { ConfigResolver } from './ConfigResolver';
 import { Runner } from './Runner';
 import { CheckboxPrompt } from './Prompt/CheckboxPrompt';
 import { ListPrompt } from './Prompt/ListPrompt';
 import { InputPrompt } from './Prompt/InputPrompt';
+import { ScriptDTO } from './Script/ScriptDTO';
 
 (async () => {
 	try {
@@ -24,4 +25,5 @@ export {
 	CheckboxPrompt,
 	ListPrompt,
 	InputPrompt,
+	ScriptDTO,
 }

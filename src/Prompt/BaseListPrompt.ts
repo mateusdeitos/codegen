@@ -1,5 +1,5 @@
 import { Answers } from "inquirer";
-import { Config } from "../config";
+import { Config } from "../Config";
 import { Prompt } from "../Script/types";
 import { BasePrompt } from "./BasePrompt";
 

@@ -1,4 +1,4 @@
-import { Config } from "../config";
+import { Config } from "../Config";
 import { join } from 'path';
 import { PromptInterface } from "./types";
 import { Prompt } from '../Script/types';

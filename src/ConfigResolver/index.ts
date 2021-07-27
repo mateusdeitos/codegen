@@ -1,5 +1,5 @@
 import { Script } from "../Script";
-import { InitialConfig } from "../config/InitialConfig";
+import { InitialConfig } from "../Config/InitialConfig";
 import { Prompter } from "../Prompter";
 
 export class ConfigResolver {
@@ -13,5 +13,6 @@ export class ConfigResolver {
 			const { script } = await prompter.PromptChooseScript();
 			return new Script(script);
 		}
+
 	}
 }

@@ -1,13 +1,14 @@
-import { Config } from '../config';
+import { Config } from '../Config';
 import { existsSync } from 'fs';
 import { parse } from '../helpers/parsing.helpers';
 import { resolve } from 'path';
 import { Prompt } from './types';
 import { Answers } from 'inquirer';
-import { InitialConfig } from '../config/InitialConfig';
+import { InitialConfig } from '../Config/InitialConfig';
 import { TemplateResolver } from './TemplateResolver';
 import { join } from 'path';
 import { BasePrompt } from '../Prompt/BasePrompt';
+import { ScriptDTO } from './ScriptDTO';
 
 export class Script {
 
@@ -16,25 +17,29 @@ export class Script {
 	private scriptPath: string;
 
 	constructor(scriptPath: string) {
-		let script = null;
+		let scriptDTO = null;
 		if (existsSync(join(process.cwd(), scriptPath))) {
-			script = require(join(process.cwd(), scriptPath));
+			scriptDTO = require(join(process.cwd(), scriptPath));
 			this.scriptPath = join(process.cwd(), scriptPath);
-		} else if(existsSync(join(process.cwd(), scriptPath))) {
-			script = require(join(process.cwd(), scriptPath));
+		} else if (existsSync(join(process.cwd(), scriptPath))) {
+			scriptDTO = require(join(process.cwd(), scriptPath));
 			this.scriptPath = join(process.cwd(), scriptPath);
 		}
 
-		if (!script) {
+		if (!scriptDTO) {
 			throw new Error(`Script ${scriptPath} not found`);
+		}
+
+		if (!(scriptDTO instanceof ScriptDTO)) {
+			throw new Error(`Script ${scriptPath} must export an instance of ScriptDTO`);
 		}
 
 		this.config = new InitialConfig();
 		this.config.extend({
 			pathToTemplates: resolve(this.scriptPath, '..', TemplateResolver.templatesFolder),
-			...script?.config
+			...scriptDTO.getConfig(),
 		});
-		this.prompts = script?.prompts || [];
+		this.prompts = scriptDTO.getPrompts();
 		this.validatePrompts();
 		this.initConfig();
 	}
@@ -73,6 +78,14 @@ export class Script {
 	public getPrompts = () => {
 		return this.parsePrompts(this.prompts);
 	};
+
+	public setPrompts(prompts: BasePrompt[]) {
+		this.prompts = prompts;
+	}
+
+	public setConfig(config: Config) {
+		this.config = config;
+	}
 
 	private parsePrompts = (prompts: BasePrompt[]) => {
 		return prompts.map(prompt => {
