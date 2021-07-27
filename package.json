@@ -1,5 +1,5 @@
 {
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"name": "codegen-mateusdeitos",
 	"description": "A package to easily generate code files",
 	"repository": {
@@ -11,7 +11,7 @@
 	},
 	"scripts": {
 		"build": "yarn tsc",
-		"publish": "yarn build && npm publish"
+		"publish-npm": "yarn build && npm publish"
 	},
 	"license": "MIT",
 	"dependencies": {
