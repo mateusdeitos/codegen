@@ -167,9 +167,9 @@ clone@^1.0.2:
   integrity sha1-2jCcwmPfFZlMaIypAheco8fNfH4=
 
 codegen-mateusdeitos@^1.0.1:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/codegen-mateusdeitos/-/codegen-mateusdeitos-1.0.3.tgz#fb7676518b8a20615b8600a5513d4c05d98d1fb9"
-  integrity sha512-oHyqAvM467V4KFBBolSYW2jQeq+eBTI0lQO84TIfSfvodcJdTwN5m0v/9LL7U7Axf5+RM3SWPWMp2YVTyRvo3Q==
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/codegen-mateusdeitos/-/codegen-mateusdeitos-1.0.4.tgz#13bc6f7499e4384cabddd3e500bf84abe8619b6c"
+  integrity sha512-DEwPHtfjgpcs0H3W1fZ+shWg1DoFrhikmiFQbAfUCQC1xe/Xu8duymA+e8MISnhG1FPSQvNRdjvnKrsVwUhTrQ==
   dependencies:
     hygen "^6.1.0"
     inquirer "^8.1.2"
