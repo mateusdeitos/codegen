@@ -7,11 +7,12 @@ import { Answers } from 'inquirer';
 import { InitialConfig } from '../config/InitialConfig';
 import { TemplateResolver } from './TemplateResolver';
 import { join } from 'path';
+import { BasePrompt } from '../Prompt/BasePrompt';
 
 export class Script {
 
 	private config: Config;
-	private prompts: Prompt.PromptQuestion[];
+	private prompts: BasePrompt[];
 	private scriptPath: string;
 
 	constructor(scriptPath: string) {
@@ -34,7 +35,14 @@ export class Script {
 			...script?.config
 		});
 		this.prompts = script?.prompts || [];
+		this.validatePrompts();
 		this.initConfig();
+	}
+
+	private validatePrompts() {
+		if (!this.prompts.every(prompt => prompt instanceof BasePrompt)) {
+			throw new Error("Invalid Prompt, all prompts must be an instance of BasePrompt");
+		}
 	}
 
 	private initConfig() {
@@ -66,34 +74,19 @@ export class Script {
 		return this.parsePrompts(this.prompts);
 	};
 
-	private parsePrompts = (prompts: Prompt.PromptQuestion[]) => {
+	private parsePrompts = (prompts: BasePrompt[]) => {
 		return prompts.map(prompt => {
+			prompt.parseValidate(this.config);
 			return {
-				...prompt,
-				validate: this.parseValidatePrompt(prompt.validate),
-				default: this.config.get(prompt.name)
+				...prompt.getPrompt(),
 			};
 		});
 	}
 
-	private parseValidatePrompt(validate: Prompt.PromptQuestion["validate"]) {
-		if (typeof validate === 'function') {
-			return (input: string, answers: Answers) => {
-				return validate(input, answers, this.config.getConfig());
-			};
-		}
-
-		return null;
-	}
-
-	private isValidParser = (parser: Prompt.PromptQuestion["parser"]) => {
-		return !!parser && typeof parser === 'function';
-	}
-
 	private getParsers(): Record<string, Prompt.Parser> {
 		return this.prompts.reduce((acc, prompt) => {
-			if (prompt.parser && this.isValidParser(prompt.parser)) {
-				return { ...acc, [prompt.name]: prompt.parser };
+			if (prompt.hasParser()) {
+				return { ...acc, [prompt.getName()]: prompt.getParser() };
 			}
 
 			return { ...acc };
@@ -127,8 +120,7 @@ export class Script {
 			throw new Error("Path to templates folder not defined");
 		};
 
-		return this.config.get('pathToTemplates')
-
+		return this.config.get('pathToTemplates');
 
 	}
 

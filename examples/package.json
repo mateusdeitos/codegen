@@ -5,5 +5,8 @@
   "license": "MIT",
   "dependencies": {
     "codegen-mateusdeitos": "^1.0.1"
+  },
+  "scripts": {
+	"codegen-local": "cd ../lib && yarn tsc && node dist/index.js"
   }
 }

@@ -3,6 +3,9 @@ import { InitialConfig } from './config/InitialConfig';
 import { parse } from './helpers/parsing.helpers';
 import { ConfigResolver } from './ConfigResolver';
 import { Runner } from './Runner';
+import { CheckboxPrompt } from './Prompt/CheckboxPrompt';
+import { ListPrompt } from './Prompt/ListPrompt';
+import { InputPrompt } from './Prompt/InputPrompt';
 
 (async () => {
 	try {
@@ -17,3 +20,8 @@ import { Runner } from './Runner';
 	}
 })()
 
+export {
+	CheckboxPrompt,
+	ListPrompt,
+	InputPrompt,
+}

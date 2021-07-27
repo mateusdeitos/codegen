@@ -1,16 +1,16 @@
 
 export namespace Prompt {
 	export type Parser<T = any> = (value: string, answers: T, config: Record<string, unknown>) => string;
-	export type Choice = {
+	export type Choice<T = any> = {
 		name: string;
 		value: string;
-	}
+	} | ((answers: T, config: Record<string, unknown>) => string);
 
 	export interface PromptQuestion<T = any> {
-		type?: string | undefined;
+		type?: "input" | "password" | "list" | "checkbox" | "confirm";
 		name?: string;
-		message?: string | ((answers: T) => string);
-		default?: string | ((answers: T) => string);
+		message?: string | ((answers: T, config: Record<string, unknown>) => string);
+		default?: string | number | boolean | [] | ((answers: any) => string);
 
 		/**
 		 * The prefix of the `message`.
@@ -31,12 +31,12 @@ export namespace Prompt {
 		 * @param answers
 		 * The answers provided by the user.
 		 */
-		filter? (input: any, answers: T, config: Record<string, unknown>): any;
+		filter?(input: any, answers: T, config: Record<string, unknown>): any;
 
 		/**
 		 * A value indicating whether the question should be prompted.
 		 */
-		when? (answers: T): boolean;
+		when?(answers: T): boolean;
 
 		/**
 		 * Process an answer after all prompts have been completed.
