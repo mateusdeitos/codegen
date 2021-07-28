@@ -1,5 +1,5 @@
-const { InputPrompt, ScriptDTO, CheckboxPrompt } = require('codegen-mateusdeitos');
-// const { ScriptDTO, InputPrompt } = require('../../../dist');
+// const { InputPrompt, ScriptDTO, CheckboxPrompt } = require('codegen-mateusdeitos');
+const { ScriptDTO, InputPrompt, CheckboxPrompt } = require('../../../dist');
 
 const scriptDTO = new ScriptDTO();
 scriptDTO.addPrompt(
@@ -9,13 +9,24 @@ scriptDTO.addPrompt(
 	new CheckboxPrompt('methods', 'Escolha os métodos do controller').setChoices([
 		{
 			name: 'index',
-			value: 'public index() {\n}'
+			value: 'index'
 		},
 		{
 			name: 'show',
-			value: 'public show(id) {\n}'
+			value: 'show'
 		}
 	])
-)
+).setConfig({
+	afterParseAnswers: (answers, config) => {
+		if (answers.methods && Array.isArray(answers.methods)) {
+			const method_show = answers.methods.includes('show') ? 'public show(id) {\nreturn "Show"\n}' : "";
+			const method_index = answers.methods.includes('index') ? 'public index() {\nreturn "Index"\n}' : "";
+			return {
+				method_show,
+				method_index,
+			}
+		}
+	}
+})
 
 module.exports = scriptDTO;

@@ -26,6 +26,10 @@ export abstract class Config {
 		return this.config.hasOwnProperty(key);
 	}
 
+	public hasCallback(key: string) {
+		return this.has(key) && typeof this.get(key) === 'function';
+	}
+
 	public getConfig() {
 		return this.config;
 	}

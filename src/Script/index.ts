@@ -37,6 +37,8 @@ export class Script {
 		this.config = new InitialConfig();
 		this.config.extend({
 			pathToTemplates: resolve(this.scriptPath, '..', TemplateResolver.templatesFolder),
+			beforeParseAnswers: null,
+			afterParseAnswers: null,
 			...scriptDTO.getConfig(),
 		});
 		this.prompts = scriptDTO.getPrompts();
@@ -107,9 +109,18 @@ export class Script {
 	}
 
 	public parseAnswers(answers: Answers): Answers {
+		let parsedAnswers = answers;
+		if (this.config.hasCallback('beforeParseAnswers')) {
+			const beforeParseAnswers = this.config.get('beforeParseAnswers');
+			const parsedAnswersCallbackBefore = beforeParseAnswers(parsedAnswers, this.config.getConfig());
+			parsedAnswers = {
+				...parsedAnswers,
+				parsedAnswersCallbackBefore,
+			};
+		}
+
 		const parsers = this.getParsers();
-		let parsedAnswers = {};
-		Object.entries(answers).forEach(([key, value]) => {
+		Object.entries(parsedAnswers).forEach(([key, value]) => {
 			let parsedAnswer = value;
 			const parser = parsers[key];
 			if (parser) {
@@ -120,6 +131,15 @@ export class Script {
 			}
 			parsedAnswers[key] = parsedAnswer;
 		});
+
+		if (this.config.hasCallback('afterParseAnswers')) {
+			const afterParseAnswers = this.config.get('afterParseAnswers');
+			const parsedAnswersCallbackAfter = afterParseAnswers(parsedAnswers, this.config.getConfig());
+			parsedAnswers = {
+				...parsedAnswers,
+				parsedAnswersCallbackAfter,
+			};
+		}
 
 		return parsedAnswers;
 	}
