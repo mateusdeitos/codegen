@@ -124,7 +124,7 @@ export abstract class BasePrompt {
 			});
 		}
 
-		this.setValidate(null);
+		this.setWhen(null);
 	}
 
 	public parseFilter(config: Config) {
@@ -135,7 +135,7 @@ export abstract class BasePrompt {
 			});
 		}
 
-		this.setValidate(null);
+		this.setFilter(null);
 	}
 
 	public setWhen(when: Prompt.PromptQuestion["when"]) {

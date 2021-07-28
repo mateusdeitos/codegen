@@ -16,6 +16,7 @@ export abstract class BaseListPrompt extends BasePrompt {
 
 	public setChoices(choices: Prompt.PromptQuestion["choices"]) {
 		this.choices = choices;
+		return this;
 	}
 
 	public parseChoices(config: Config) {

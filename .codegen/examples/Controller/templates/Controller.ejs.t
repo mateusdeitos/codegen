@@ -1,14 +1,14 @@
 ---
-to: examples/Controllers/<%=name%>Controller.php
+to: .codegen/generated/Controllers/<%=name%>Controller.php
+force: true
 ---
 
 class <%=name%>Controller {
 
-	public index() {
-		return "Hello World";
-	}
-
-	public foo() {
-		return "Hello World";
-	}
+	<% if (method_index) { %>
+		<%=method_index%>
+	<% } %>
+	<% if (method_show) { %>
+		<%=method_show%>
+	<% } %>
 }
