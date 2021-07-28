@@ -1,17 +1,19 @@
 import { Answers } from "inquirer";
 import { BasePrompt } from "../Prompt/BasePrompt";
 
+export type ScriptConfigEnums = Array<Record<string, string | number | boolean> | string>;
 export type ScriptConfig = {
 	pathToTemplates?: string;
 	beforeParseAnswers?: (answers: Answers) => Answers;
 	afterParseAnswers?: (answers: Answers) => Answers;
-} & Record<string,unknown>;
+	enums?: ScriptConfigEnums | Record<string, ScriptConfigEnums>;
+} & Record<string, unknown>;
 export class ScriptDTO {
 
 	constructor(
 		private prompts: BasePrompt[] = [],
 		private config: ScriptConfig = {},
-	){}
+	) { }
 
 	public getConfig(): ScriptConfig {
 		return this.config;

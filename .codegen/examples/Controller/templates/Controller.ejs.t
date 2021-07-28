@@ -2,13 +2,10 @@
 to: .codegen/generated/Controllers/<%=name%>Controller.php
 force: true
 ---
+<?php
 
-class <%=name%>Controller {
-
-	<% if (method_index) { %>
-		<%=method_index%>
-	<% } %>
-	<% if (method_show) { %>
-		<%=method_show%>
-	<% } %>
+class <%=name%>Controller <%=interfaces ? `implements ${interfaces}` : null%> {
+<% if (interface_methods) { %>
+<%-interface_methods%>
+<% } %>
 }

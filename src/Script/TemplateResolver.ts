@@ -1,37 +1,47 @@
-import { promisify } from 'util';
-import { resolve, sep } from 'path';
+import { resolve } from 'path';
+import { Logger, runner as hygen } from 'hygen';
 import { Answers } from 'inquirer';
-const exec = promisify(require('child_process').exec);
-
+import { sep } from 'path';
 export class TemplateResolver {
 
 	public static templatesFolder = "templates";
 
-	constructor(private templatesPath: string) {}
+	constructor(private templatesPath: string) { }
 
-	private parseAnswersToArgs(answers: Answers) {
-		const recursive = (data: Answers, prefix = "") => {
-			return Object.entries(data).map(([key, val]) => {
-				if (typeof val === 'object') {
-					return recursive(val, key);
-				}
-
-				const newKey = !!prefix ? `${prefix}_${key}` : key;
-
-				return `--${newKey} '${!!val ? val : ""}'`;
-			}).join(" ")
-		}
-
-		return recursive(answers);
+	private parseAnswersToArgv(answers: Answers = {}) {
+		return Object.entries(answers).map(([key, val]) => ["--" + key, val]).reduce((acc, current) => {
+			const [key, val] = current;
+			return [...acc, key, val]
+		}, []);
 	}
 
 	public async applyAnswers(answers: Answers) {
-		const args = this.parseAnswersToArgs(answers);
 		const templatesPath = resolve(this.templatesPath);
 		const hygenPath = resolve(templatesPath, '..', '..');
 		const [hygenAction] = resolve(templatesPath, '..').split(sep).reverse();
-		const command = `HYGEN_TMPLS=${hygenPath} ./node_modules/.bin/hygen ${hygenAction} ${TemplateResolver.templatesFolder} ${args}`;
-		return exec(command);
+		const argv = this.parseAnswersToArgv(answers);
+		argv.unshift(TemplateResolver.templatesFolder);
+		argv.unshift(hygenAction);
+
+		const result = await hygen(argv, {
+			templates: hygenPath,
+			cwd: process.cwd(),
+			logger: new Logger(console.log.bind(console)),
+			createPrompter: () => require('inquirer'),
+			exec: (action, body) => {
+				const opts = body && body.length > 0 ? { input: body } : {}
+				return require('execa').shell(action, opts)
+			},
+			debug: !!process.env.DEBUG
+		});
+		if (!result.success) {
+			throw new Error("Ocorreu um erro ao gerar as templates, verifique se o seu script está gerando todas as variáveis necessárias");
+		}
+
+
+		return {
+			paths: result.actions.map(({ subject }) => subject)
+		};
 	}
 
 }

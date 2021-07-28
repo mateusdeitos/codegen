@@ -115,7 +115,7 @@ export class Script {
 			const parsedAnswersCallbackBefore = beforeParseAnswers(parsedAnswers, this.config.getConfig());
 			parsedAnswers = {
 				...parsedAnswers,
-				parsedAnswersCallbackBefore,
+				...parsedAnswersCallbackBefore,
 			};
 		}
 
@@ -137,7 +137,7 @@ export class Script {
 			const parsedAnswersCallbackAfter = afterParseAnswers(parsedAnswers, this.config.getConfig());
 			parsedAnswers = {
 				...parsedAnswers,
-				parsedAnswersCallbackAfter,
+				...parsedAnswersCallbackAfter,
 			};
 		}
 
