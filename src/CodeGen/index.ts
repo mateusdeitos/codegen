@@ -8,7 +8,8 @@ export type ScriptConfig = {
 	afterParseAnswers?: (answers: Answers) => Answers;
 	enums?: ScriptConfigEnums | Record<string, ScriptConfigEnums>;
 } & Record<string, unknown>;
-export class ScriptDTO {
+
+export class CodeGen {
 
 	constructor(
 		private prompts: BasePrompt[] = [],
@@ -33,7 +34,7 @@ export class ScriptDTO {
 	}
 
 	public setPrompts(prompts: BasePrompt[]) {
-		this.prompts = prompts;
+		prompts.forEach(prompt => this.addPrompt(prompt));
 		return this;
 	}
 

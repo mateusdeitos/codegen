@@ -8,7 +8,7 @@ import { InitialConfig } from '../Config/InitialConfig';
 import { TemplateResolver } from './TemplateResolver';
 import { join } from 'path';
 import { BasePrompt } from '../Prompt/BasePrompt';
-import { ScriptDTO } from './ScriptDTO';
+import { CodeGen } from '../CodeGen';
 
 export class Script {
 
@@ -17,21 +17,21 @@ export class Script {
 	private scriptPath: string;
 
 	constructor(scriptPath: string) {
-		let scriptDTO = null;
+		let codeGen = null;
 		if (existsSync(join(process.cwd(), scriptPath))) {
-			scriptDTO = require(join(process.cwd(), scriptPath));
+			codeGen = require(join(process.cwd(), scriptPath));
 			this.scriptPath = join(process.cwd(), scriptPath);
 		} else if (existsSync(join(process.cwd(), scriptPath))) {
-			scriptDTO = require(join(process.cwd(), scriptPath));
+			codeGen = require(join(process.cwd(), scriptPath));
 			this.scriptPath = join(process.cwd(), scriptPath);
 		}
 
-		if (!scriptDTO) {
+		if (!codeGen) {
 			throw new Error(`Script ${scriptPath} not found`);
 		}
 
-		if (!(scriptDTO instanceof ScriptDTO)) {
-			throw new Error(`Script ${scriptPath} must export an instance of ScriptDTO`);
+		if (!(codeGen instanceof CodeGen)) {
+			throw new Error(`Script ${scriptPath} must export an instance of CodeGen`);
 		}
 
 		this.config = new InitialConfig();
@@ -39,9 +39,9 @@ export class Script {
 			pathToTemplates: resolve(this.scriptPath, '..', TemplateResolver.templatesFolder),
 			beforeParseAnswers: null,
 			afterParseAnswers: null,
-			...scriptDTO.getConfig(),
+			...codeGen.getConfig(),
 		});
-		this.prompts = scriptDTO.getPrompts();
+		this.prompts = codeGen.getPrompts();
 		this.validatePrompts();
 		this.initConfig();
 	}

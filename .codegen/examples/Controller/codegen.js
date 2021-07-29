@@ -1,5 +1,5 @@
-const { InputPrompt, ScriptDTO, CheckboxPrompt } = require('codegen-mateusdeitos');
-// const { ScriptDTO, InputPrompt, CheckboxPrompt } = require('../../../dist');
+// const { InputPrompt, ScriptDTO, CheckboxPrompt } = require('codegen-mateusdeitos');
+const { CodeGen, InputPrompt, CheckboxPrompt } = require('../../../dist');
 
 const interfacesMethodsEnum = {
 	ShowProdutoInterface: [
@@ -15,13 +15,13 @@ const interfacesMethodsEnum = {
 	DeleteProdutoInterface: [
 		'delete(int $id)'
 	]
-}
-	;
+};
 
-const scriptDTO = new ScriptDTO();
-scriptDTO.setPrompts([
+const codeGen = new CodeGen();
+
+codeGen.setPrompts([
 	new InputPrompt('name', 'Qual é o nome do controller?'),
-	new CheckboxPrompt('interfaces', 'Definas as interfaces que o controller irá implementar').setChoices(Object.entries(interfacesMethodsEnum).map(([interface, methods]) => {
+	new CheckboxPrompt('interfaces', 'Defina as interfaces que o controller irá implementar').setChoices(Object.entries(interfacesMethodsEnum).map(([interface, methods]) => {
 		return {
 			name: interface,
 			value: {
@@ -32,7 +32,7 @@ scriptDTO.setPrompts([
 	}))
 ])
 
-scriptDTO.setConfig({
+codeGen.setConfig({
 	afterParseAnswers: (answers, config) => {
 		if (answers.interfaces && Array.isArray(answers.interfaces)) {
 			const convertMethod = (method) => {
@@ -40,7 +40,7 @@ scriptDTO.setConfig({
 			}
 
 			return {
-				interface_methods: answers.interfaces.map(({ methods }) => methods).flat().map(convertMethod).join('\n'),
+				interface_methods: [...answers.interfaces.map(({ methods }) => methods)].map(convertMethod).join('\n'),
 				interfaces: answers.interfaces.map(({ interface }) => interface).join(", ")
 			}
 		}
@@ -50,7 +50,7 @@ scriptDTO.setConfig({
 			interface_methods: ""
 		};
 	},
-	enums: interfacesMethodsEnum
+	enums: { ...interfacesMethodsEnum }
 })
 
-module.exports = scriptDTO;
+module.exports = codeGen;

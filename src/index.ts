@@ -6,12 +6,11 @@ import { Runner } from './Runner';
 import { CheckboxPrompt } from './Prompt/CheckboxPrompt';
 import { ListPrompt } from './Prompt/ListPrompt';
 import { InputPrompt } from './Prompt/InputPrompt';
-import { ScriptDTO } from './Script/ScriptDTO';
+import { CodeGen } from './CodeGen';
 
 (async () => {
 	try {
 		const initialConfig = new InitialConfig(parse.argumentsToObject(process.argv));
-		initialConfig.validate();
 		const resolver = new ConfigResolver(initialConfig);
 		const ChosenScript = await resolver.resolve();
 		const runner = new Runner(ChosenScript);
@@ -25,5 +24,5 @@ export {
 	CheckboxPrompt,
 	ListPrompt,
 	InputPrompt,
-	ScriptDTO,
+	CodeGen,
 }

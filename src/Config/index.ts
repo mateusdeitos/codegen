@@ -34,7 +34,7 @@ export abstract class Config {
 		return this.config;
 	}
 
-	public validate() {
+	protected validate() {
 		return true;
 	}
 

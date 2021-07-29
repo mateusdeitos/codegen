@@ -1,5 +1,6 @@
-import { Dirent, existsSync, readdirSync } from 'fs';
+import { existsSync } from 'fs';
 import path from 'path';
+import { file } from '../helpers/file.helpers';
 import { Config } from '.';
 
 let instance: InitialConfig | null = null;
@@ -19,6 +20,7 @@ export class InitialConfig extends Config {
 			...config
 		});
 		this.set('scripts', this.getScripts());
+		this.validate();
 		this.setInstance();
 	}
 
@@ -59,27 +61,7 @@ export class InitialConfig extends Config {
 			throw new Error("Root directory does not exist");
 		};
 
-		const isInsideNodeModules = (file: Dirent) => {
-			return file.name.includes('node_modules');
-		}
-
-		const readRecursive = (dir: string): string[] => {
-			const files = [];
-			readdirSync(dir, { withFileTypes: true }).forEach((file) => {
-				if (file.isDirectory() && !isInsideNodeModules(file)) {
-					files.push(...readRecursive(path.join(dir, file.name)));
-				}
-
-				if (file.name === this.get('scriptDefaultName') && !isInsideNodeModules(file)) {
-					files.push(path.join(dir, file.name));
-				}
-
-			});
-
-			return files;
-		}
-
-		const _scripts = readRecursive(this.get('rootDir'));
+		const _scripts = file.findFileNameRecursive(this.get('rootDir'), this.get('scriptDefaultName'));
 
 		return _scripts
 			.map(script => script.replace(new RegExp(process.cwd(), "g"), ""))
@@ -87,7 +69,7 @@ export class InitialConfig extends Config {
 
 	};
 
-	public validate() {
+	protected validate() {
 		if (!this.rootDirExists()) {
 			throw new Error("Root directory does not exist");
 		};
