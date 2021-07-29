@@ -9,7 +9,7 @@ Por baixo dos panos são utilizadas 2 libs para isso:
 # Como iniciar
 
 Instale:
-`yarn add codegen-mateusdeitos`
+`yarn add simple-codegen`
 
 # Crie o rootDir (.codegen)
 
@@ -65,13 +65,15 @@ Ao selecionar uma das opções, o arquivo codegen.js será importado e os prompt
 Arquivo ./codegen/Controller/codegen.js:
 
 ```js
-const { InputPrompt } = require('codegen-mateusdeitos');
+const { InputPrompt, CodeGen } = require('simple-codegen');
 
-module.exports = {
-	prompts: [
-		new InputPrompt('name', 'Qual é o nome do controller?'),
-	]
-}
+const codeGen = new CodeGen();
+
+// Utilizar sempre as classes exportadas da lib com sufixo 'Prompt'
+codeGen.addPrompt(new InputPrompt('name', 'Qual é o nome do controller?'));
+
+// O objeto exportado deve ser sempre uma instância de CodeGen
+module.exports = codeGen;
 
 ```
 

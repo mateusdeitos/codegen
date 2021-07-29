@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "codegen-mateusdeitos": "^1.0.1"
+    "simple-codegen": "^1.0.0"
   },
   "scripts": {
     "codegen-local": "cd ../ && yarn tsc && node dist/index.js"

@@ -1,9 +1,9 @@
 {
-	"version": "1.0.12",
-	"name": "codegen-mateusdeitos",
+	"version": "1.0.0",
+	"name": "simple-codegen",
 	"description": "A package to easily generate code files",
 	"repository": {
-		"url": "https://github.com/mateusdeitos/codegen"
+		"url": "https://github.com/mateusdeitos/simple-codegen"
 	},
 	"main": "./dist/index.js",
 	"bin": {

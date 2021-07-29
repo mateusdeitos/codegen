@@ -1,5 +1,5 @@
-// const { InputPrompt, ScriptDTO, CheckboxPrompt } = require('codegen-mateusdeitos');
-const { CodeGen, InputPrompt, CheckboxPrompt } = require('../../../dist');
+const { InputPrompt, CodeGen, CheckboxPrompt } = require('simple-codegen');
+// const { CodeGen, InputPrompt, CheckboxPrompt } = require('../../../dist');
 
 const interfacesMethodsEnum = {
 	ShowProdutoInterface: [
