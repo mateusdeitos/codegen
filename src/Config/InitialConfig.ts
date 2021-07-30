@@ -6,25 +6,23 @@ import { Config } from '.';
 let instance: InitialConfig | null = null;
 
 export class InitialConfig extends Config {
-	
-	constructor(config: Record<string, unknown> = {}) {
-		super();
 
-		if (instance instanceof InitialConfig) {
-			return this.getInstance();
-		}
+	private constructor() {
+		super();
 
 		this.extend({
 			rootDir: path.join(process.cwd(), '.codegen'),
 			scriptDefaultName: 'codegen.js',
-			...config
 		});
 		this.set('scripts', this.getScripts());
 		this.validate();
 		this.setInstance();
 	}
 
-	public getInstance() {
+	public static getInstance() {
+		if (!(instance instanceof InitialConfig)) {
+			instance = new InitialConfig();
+		}
 		return instance;
 	}
 

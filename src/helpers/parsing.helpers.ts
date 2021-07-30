@@ -14,6 +14,10 @@ export const parse = {
 	},
 
 	phpEnum: function (phpFile = "") {
+		if (!existsSync(phpFile)) {
+			return null;
+		}
+
 		//@ts-ignore
 		const phpParser = new Engine({
 			parser: {
@@ -21,24 +25,38 @@ export const parse = {
 			},
 		});
 
-		if (!existsSync(phpFile)) {
-			return null;
-		}
+		const getClassConstants = (parsedClass) => {
+			if (!parsedClass || typeof parsedClass !== 'object') return null;
+			const constants = [];
+
+			const iterable = Array.isArray(parsedClass) ? parsedClass : Object.values(parsedClass);
+
+			iterable.forEach((value) => {
+				if (!value) return;
+				if ((typeof value === 'object') && "kind" in value && value.kind === "constant") {
+					constants.push(value);
+				}
+
+				if (typeof value === 'object') {
+					constants.push(...getClassConstants(value));
+				}
+			});
+
+			return constants;
+		};
 
 		try {
 			const parsed = phpParser.parseCode(readFileSync(phpFile, 'utf8'));
-
-			if (!parsed || !(parsed.children || []).length || !(parsed.children[0].body || []).length) {
+			const constants = getClassConstants(parsed);
+			if (!constants || !Array.isArray(constants)) {
 				throw new Error("Invalid parsing result");
 			}
 
-			const parsedEnum = parsed?.children[0]?.body?.reduce((acc, constante) => {
-				const { constants } = constante;
-				const { name } = constants[0].name;
-				const { value } = constants[0].value;
+			const parsedEnum = constants.reduce((acc, constante) => {
+				const { name, value } = constante;
 				return {
 					...acc,
-					[name]: value
+					[name.name]: value.value
 				}
 			}, {});
 
@@ -46,6 +64,6 @@ export const parse = {
 		} catch (error) {
 			throw new Error("Não foi possível converter o enum: " + phpFile);
 		}
+	},
+};
 
-	}
-}

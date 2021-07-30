@@ -8,7 +8,7 @@ import { InitialConfig } from '../Config/InitialConfig';
 import { TemplateResolver } from './TemplateResolver';
 import { join } from 'path';
 import { BasePrompt } from '../Prompt/BasePrompt';
-import { CodeGen } from '../CodeGen';
+import { CodeGen, ScriptConfig } from '../CodeGen';
 
 export class Script {
 
@@ -34,13 +34,13 @@ export class Script {
 			throw new Error(`Script ${scriptPath} must export an instance of CodeGen`);
 		}
 
-		this.config = new InitialConfig();
+		this.config = InitialConfig.getInstance();
 		this.config.extend({
 			pathToTemplates: resolve(this.scriptPath, '..', TemplateResolver.templatesFolder),
 			beforeParseAnswers: null,
 			afterParseAnswers: null,
 			...codeGen.getConfig(),
-		});
+		} as ScriptConfig);
 		this.prompts = codeGen.getPrompts();
 		this.validatePrompts();
 		this.initConfig();
@@ -64,7 +64,7 @@ export class Script {
 			if (typeof v === 'function') {
 				parsedEnums[k] = v(this.config.getConfig());
 			} else if (typeof v === 'string' && v.endsWith(".php")) {
-				parsedEnums[k] = parse.phpEnum(resolve(this.scriptPath, '..', v));
+				parsedEnums[k] = parse.phpEnum(resolve(process.cwd(), v));
 			} else if (typeof v === 'object') {
 				parsedEnums[k] = v;
 			}

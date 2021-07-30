@@ -10,7 +10,8 @@ import { CodeGen } from './CodeGen';
 
 (async () => {
 	try {
-		const initialConfig = new InitialConfig(parse.argumentsToObject(process.argv));
+		const initialConfig = InitialConfig.getInstance();
+		initialConfig.extend(parse.argumentsToObject(process.argv));
 		const resolver = new ConfigResolver(initialConfig);
 		const ChosenScript = await resolver.resolve();
 		const runner = new Runner(ChosenScript);

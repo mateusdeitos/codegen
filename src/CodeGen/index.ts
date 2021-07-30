@@ -4,8 +4,8 @@ import { BasePrompt } from "../Prompt/BasePrompt";
 export type ScriptConfigEnums = Array<Record<string, string | number | boolean> | string>;
 export type ScriptConfig = {
 	pathToTemplates?: string;
-	beforeParseAnswers?: (answers: Answers) => Answers;
-	afterParseAnswers?: (answers: Answers) => Answers;
+	beforeParseAnswers?: (answers: Answers, config: Record<string, unknown>) => Answers;
+	afterParseAnswers?: (answers: Answers, config: Record<string, unknown>) => Answers;
 	enums?: ScriptConfigEnums | Record<string, ScriptConfigEnums>;
 } & Record<string, unknown>;
 
