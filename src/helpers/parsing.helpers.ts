@@ -2,18 +2,24 @@ import { existsSync, readFileSync } from 'fs';
 import Engine from 'php-parser';
 
 export const parse = {
-	argumentsToObject: function (args = []) {
-		let result = {};
-		args.forEach(function (arg) {
+	argumentsToObject: (args: string[] = []) => {
+		let result = {
+			answers: {}
+		};
+		args.forEach((arg: string) => {
 			const argParts = arg.split('=');
 			if (argParts.length === 2) {
-				result[argParts[0]] = argParts[1];
+				const [key, value] = argParts;
+				if (key.startsWith("--")) {
+					result.answers[key.substring(2)] = value;
+				}
+				result[key] = value;
 			}
 		});
 		return result;
 	},
 
-	phpEnum: function (phpFile = "") {
+	phpEnum: (phpFile = "") => {
 		if (!existsSync(phpFile)) {
 			return null;
 		}

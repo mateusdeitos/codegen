@@ -9,8 +9,16 @@ export class Runner {
 
 	public async run() {
 		console.log(`running file ${this.script.getScriptPath()}`);
-		const answers = await inquirer.prompt(this.script.getPrompts());
-		const parsedAnswers = this.script.parseAnswers(answers);
+		const scriptConfig = this.script.getConfig();		
+		const answersFromCLIArgs = scriptConfig.has('answers') ? scriptConfig.get('answers') : {};
+		
+		const prompts = this.script.getPrompts().filter(prompt => !(prompt.name in answersFromCLIArgs)); 
+
+		const answersFromPrompts = await inquirer.prompt(prompts);
+		const parsedAnswers = this.script.parseAnswers({
+			...answersFromCLIArgs,
+			...answersFromPrompts
+		});
 		const template = new TemplateResolver(this.script.getTemplatesPath());
 		await template.applyAnswers(parsedAnswers, this.getRunner());
 	}

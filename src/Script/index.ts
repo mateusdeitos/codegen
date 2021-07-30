@@ -21,10 +21,7 @@ export class Script {
 		if (existsSync(join(process.cwd(), scriptPath))) {
 			codeGen = require(join(process.cwd(), scriptPath));
 			this.scriptPath = join(process.cwd(), scriptPath);
-		} else if (existsSync(join(process.cwd(), scriptPath))) {
-			codeGen = require(join(process.cwd(), scriptPath));
-			this.scriptPath = join(process.cwd(), scriptPath);
-		}
+		} 
 
 		if (!codeGen) {
 			throw new Error(`Script ${scriptPath} not found`);
