@@ -50,7 +50,7 @@ codeGen.setConfig({
 			interface_methods: ""
 		};
 	},
-	enums: { ...interfacesMethodsEnum }
+	enums: { ...interfacesMethodsEnum, teste: ".codegen/examples/Controller/testeEnum.php" }
 })
 
 module.exports = codeGen;
