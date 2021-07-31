@@ -20,8 +20,8 @@ const interfacesMethodsEnum = {
 const codeGen = new CodeGen();
 
 codeGen.setPrompts([
-	new InputPrompt('controllerName', 'Qual é o nome do controller?'),
-	new CheckboxPrompt('interfaces', 'Defina as interfaces que o controller irá implementar').setChoices(Object.entries(interfacesMethodsEnum).map(([interface, methods]) => {
+	new InputPrompt('viewName', 'Qual é o nome da View?'),
+	new CheckboxPrompt('interfaces', 'Defina as interfaces que a View irá implementar').setChoices(Object.entries(interfacesMethodsEnum).map(([interface, methods]) => {
 		return {
 			name: interface,
 			value: {
@@ -50,7 +50,6 @@ codeGen.setConfig({
 			interface_methods: ""
 		};
 	},
-	enums: { ...interfacesMethodsEnum, teste: ".codegen/examples/Controller/testeEnum.php" }
 })
 
 module.exports = codeGen;

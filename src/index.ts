@@ -7,11 +7,13 @@ import { CheckboxPrompt } from './Prompt/CheckboxPrompt';
 import { ListPrompt } from './Prompt/ListPrompt';
 import { InputPrompt } from './Prompt/InputPrompt';
 import { CodeGen } from './CodeGen';
+import { Template } from './Template/index';
 
 (async () => {
 	try {
 		const initialConfig = InitialConfig.getInstance();
-		initialConfig.extend(parse.argumentsToObject(process.argv));
+		const { config, answers } = await parse.argumentsToObject(process.argv);
+		initialConfig.extend({ ...config, answers });
 		const resolver = new ConfigResolver(initialConfig);
 		const ChosenScript = await resolver.resolve();
 		const runner = new Runner(ChosenScript);
@@ -26,4 +28,5 @@ export {
 	ListPrompt,
 	InputPrompt,
 	CodeGen,
+	Template
 }

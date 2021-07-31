@@ -13,8 +13,8 @@ export class InitialConfig extends Config {
 		this.extend({
 			rootDir: path.join(process.cwd(), '.codegen'),
 			scriptDefaultName: 'codegen.js',
+			cwd: process.cwd(),
 		});
-		this.set('scripts', this.getScripts());
 		this.validate();
 		this.setInstance();
 	}
@@ -51,12 +51,9 @@ export class InitialConfig extends Config {
 	}
 
 	public getScripts() {
-		if ((this.get('scripts') || []).length > 0) {
-			return this.get('scripts');
-		}
-
 		if (!this.rootDirExists()) {
-			throw new Error("Root directory does not exist");
+			throw new Error(`O 'rootDir' não existe, você precisa:
+			- Criar o diretório '.codegen' na raiz do projeto ou definir um rootDir no arquivo de configuração ou informá-lo via argumentos na CLI`);
 		};
 
 		const _scripts = file.findFileNameRecursive(this.get('rootDir'), this.get('scriptDefaultName'));
@@ -69,11 +66,12 @@ export class InitialConfig extends Config {
 
 	protected validate() {
 		if (!this.rootDirExists()) {
-			throw new Error("Root directory does not exist");
+			throw new Error(`O 'rootDir' não existe, você precisa:
+			- Criar o diretório '.codegen' na raiz do projeto ou definir um rootDir no arquivo de configuração ou informá-lo via argumentos na CLI`);
 		};
 
 		if (this.has('scripts') && (this.get('scripts') || []).length === 0) {
-			throw new Error(`No script found inside the root directory: ${this.get('rootDir')}`);
+			throw new Error(`Nenhum script encontrado dentro de: ${this.get('rootDir')}, crie um diretório para seu primeiro script e dentro dele uma pasta 'templates' para suas templates e um arquivo codegen.js com os seus prompts`);
 		};
 
 		return true;

@@ -10,7 +10,7 @@ export class ConfigResolver {
 			return new Script(this.config.get('scriptPath'));
 		} else {
 			const prompter = new Prompter(this.config)
-			const { script } = await prompter.PromptChooseScript();
+			const { script } = await prompter.resolve();
 			return new Script(script);
 		}
 

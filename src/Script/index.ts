@@ -2,42 +2,49 @@ import { Config } from '../Config';
 import { existsSync } from 'fs';
 import { parse } from '../helpers/parsing.helpers';
 import { resolve } from 'path';
-import { Prompt } from './types';
+import { Prompt } from '../Prompt/types';
 import { Answers } from 'inquirer';
 import { InitialConfig } from '../Config/InitialConfig';
 import { TemplateResolver } from './TemplateResolver';
-import { join } from 'path';
 import { BasePrompt } from '../Prompt/BasePrompt';
 import { CodeGen, ScriptConfig } from '../CodeGen';
+import { Template } from '../Template';
 
 export class Script {
 
 	private config: Config;
 	private prompts: BasePrompt[];
 	private scriptPath: string;
+	private templates: Template[];
 
 	constructor(scriptPath: string) {
 		let codeGen = null;
-		if (existsSync(join(process.cwd(), scriptPath))) {
-			codeGen = require(join(process.cwd(), scriptPath));
-			this.scriptPath = join(process.cwd(), scriptPath);
-		} 
+		this.config = InitialConfig.getInstance();
+		this.scriptPath = scriptPath;
+
+		if (existsSync(this.scriptPath)) {
+			codeGen = require(this.scriptPath);
+		}
 
 		if (!codeGen) {
-			throw new Error(`Script ${scriptPath} not found`);
+			throw new Error(`Script ${this.scriptPath} not found`);
 		}
 
 		if (!(codeGen instanceof CodeGen)) {
 			throw new Error(`Script ${scriptPath} must export an instance of CodeGen`);
 		}
 
-		this.config = InitialConfig.getInstance();
 		this.config.extend({
-			pathToTemplates: resolve(this.scriptPath, '..', TemplateResolver.templatesFolder),
 			beforeParseAnswers: null,
 			afterParseAnswers: null,
 			...codeGen.getConfig(),
 		} as ScriptConfig);
+
+		this.templates = codeGen.getTemplates();
+		if (this.templates.length === 0) {
+			this.templates.push(new Template(resolve(this.scriptPath, '..', TemplateResolver.templatesFolder)))
+		}
+
 		this.prompts = codeGen.getPrompts();
 		this.validatePrompts();
 		this.initConfig();
@@ -45,7 +52,11 @@ export class Script {
 
 	private validatePrompts() {
 		if (!this.prompts.every(prompt => prompt instanceof BasePrompt)) {
-			throw new Error("Invalid Prompt, all prompts must be an instance of BasePrompt");
+			throw new Error("Prompt inválido, os prompts devem ser uma instância de BasePrompt");
+		}
+
+		if (!this.prompts.every(prompt => prompt.isValid())) {
+			throw new Error("Prompt inválido, os prompts devem ser uma instância de BasePrompt");
 		}
 	}
 
@@ -145,12 +156,14 @@ export class Script {
 		return this.scriptPath;
 	}
 
-	public getTemplatesPath() {
-		if (!this.config.has('pathToTemplates')) {
-			throw new Error("Path to templates folder not defined");
+	public getTemplates() {
+		if (!this.templates.length) {
+			throw new Error(`Nenhuma template encontrada ou informada, você precisa:
+				- Adicionar templates à instância CodeGen utilizando o método 'addTemplate()';
+				- Cria uma pasta 'templates' no diretório do script.`);
 		};
 
-		return this.config.get('pathToTemplates');
+		return this.templates;
 
 	}
 

@@ -1,4 +1,5 @@
 import { Answers } from "inquirer";
+import { Template } from "../Template";
 import { BasePrompt } from "../Prompt/BasePrompt";
 
 export type ScriptConfigEnums = Array<Record<string, string | number | boolean> | string>;
@@ -14,6 +15,7 @@ export class CodeGen {
 	constructor(
 		private prompts: BasePrompt[] = [],
 		private config: ScriptConfig = {},
+		private templates: Template[] = []
 	) { }
 
 	public getConfig(): ScriptConfig {
@@ -42,6 +44,30 @@ export class CodeGen {
 		this.config = config;
 		return this;
 	}
+
+	public getTemplates(): Template[] {
+		return this.templates;
+	}
+
+	/**
+	 * @param {Template} template 
+	 * */
+	public addTemplate(template: Template) {
+		if (!(template instanceof Template)) {
+			throw new Error("Template inválido, o template deve ser uma instância de 'Template'");
+		}
+
+		this.templates.push(template);
+	}
+
+	public static clone(instance: CodeGen) {
+		return new CodeGen(
+			instance.getPrompts(),
+			instance.getConfig(),
+			instance.getTemplates()
+		);
+	}
+
 }
 
 

@@ -1,21 +1,41 @@
 import { existsSync, readFileSync } from 'fs';
 import Engine from 'php-parser';
+import { file } from './file.helpers';
 
 export const parse = {
-	argumentsToObject: (args: string[] = []) => {
+	argumentsToObject: async (_args: string[] = []) => {
 		let result = {
-			answers: {}
+			answers: {},
+			config: {},
 		};
-		args.forEach((arg: string) => {
+
+		let configPath = "";
+
+		_args.forEach((arg: string) => {
 			const argParts = arg.split('=');
 			if (argParts.length === 2) {
 				const [key, value] = argParts;
 				if (key.startsWith("--")) {
 					result.answers[key.substring(2)] = value;
+					return;
 				}
-				result[key] = value;
+
+				if (key == "config") {
+					configPath = value;
+					return;
+				}
+
+				result.config[key] = value;
 			}
 		});
+
+		if (configPath) {
+			const { success, ...config } = await file.importJsFile(configPath);
+			if (success) {
+				result.config = { ...result.config, ...config };
+			}
+		}
+
 		return result;
 	},
 

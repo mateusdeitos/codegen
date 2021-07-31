@@ -1,24 +1,17 @@
-import { Config } from "../Config";
-import { join } from 'path';
 import { PromptInterface } from "./types";
-import { Prompt } from '../Script/types';
+import { Prompt } from '../Prompt/types';
 
 export class PromptChooseScript implements PromptInterface {
-	constructor(private config: Config, private scripts = []) { }
+	constructor(private scripts = []) { }
 
-	public getPrompts(): Prompt.PromptQuestion[] {
+	public getPrompts(choiceMapper: (value: string) => Prompt.Choice): Prompt.PromptQuestion[] {
 		return [
 			{
 				name: 'script',
 				message: "Escolha qual template deseja gerar",
 				type: 'list',
 				parser: null,
-				choices: this.scripts.map(script => {
-					return {
-						name: script,
-						value: join(script, this.config.get('scriptDefaultName'))
-					}
-				})
+				choices: this.scripts.map(choiceMapper)
 			}
 		]
 	}

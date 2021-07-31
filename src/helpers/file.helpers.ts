@@ -1,4 +1,4 @@
-import { Dirent, readdirSync } from 'fs';
+import { Dirent, existsSync, readdirSync } from 'fs';
 import path from 'path';
 
 const findFileNameRecursive = (baseDir: string, fileName: string): string[] => {
@@ -23,7 +23,40 @@ const findFileNameRecursive = (baseDir: string, fileName: string): string[] => {
 	return files;
 }
 
+const resolvePath = (filePath: string, cwd: string = process.cwd()): string => {
+	return path.join(cwd, filePath);
+}
+
+/**
+ * Import json or js file that returns an object
+ * */
+const importJsFile = async (filePath: string): Promise<Record<string, unknown>> => {
+	if (!existsSync(resolvePath(filePath))) {
+		return {};
+	}
+
+	if (!filePath.endsWith('.json') && !filePath.endsWith(".js")) {
+		return {}
+	}
+
+	let file = await import(resolvePath(filePath));
+	if (typeof file === 'function') {
+		file = await file();
+	}
+
+	if (typeof file === 'object') {
+		return {
+			...file,
+			success: true,
+		};
+	}
+
+	return {};
+}
+
 export const file = {
-	findFileNameRecursive
+	findFileNameRecursive,
+	importJsFile,
+	resolvePath,
 }
 

@@ -1,10 +1,10 @@
 import { Answers } from "inquirer";
 import { Config } from "../Config";
-import { Prompt } from "../Script/types";
+import { Prompt } from "./types";
 import { BasePrompt } from "./BasePrompt";
 
 export abstract class BaseListPrompt extends BasePrompt {
-	protected choices?: Prompt.Choices;
+	protected choices: Prompt.Choices;
 
 	constructor(name: Prompt.PromptQuestion["name"], type: Prompt.PromptQuestion["type"], message: Prompt.PromptQuestion["message"], defaultValue: Prompt.PromptQuestion["default"] = "") {
 		super(name, type, message, defaultValue);
@@ -35,4 +35,31 @@ export abstract class BaseListPrompt extends BasePrompt {
 		}
 	}
 
+	public isValid(): boolean {
+		if (!this.name || typeof this.name !== 'string') {
+			return false;
+		}
+
+		if (!this.message || !["string", "function"].includes(typeof this.message)) {
+			return false;
+		}
+
+		if (!["checkbox", "list"].includes(this.type)) {
+			return false;
+		}
+
+		if (!this.choices) {
+			return false;
+		}
+
+		if (!Array.isArray(this.choices) && !(typeof this.choices === 'function')) {
+			return false;
+		}
+
+		if (Array.isArray(this.choices) && !this.choices.length) {
+			return false;
+		}
+
+		return true;
+	}
 }

@@ -1,4 +1,4 @@
-import { Prompt } from "../Script/types";
+import { Prompt } from "./types";
 import { BaseListPrompt } from "./BaseListPrompt";
 
 export class CheckboxPrompt extends BaseListPrompt {

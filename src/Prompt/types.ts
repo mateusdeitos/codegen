@@ -11,7 +11,7 @@ export namespace Prompt {
 		type?: "input" | "password" | "list" | "checkbox" | "confirm";
 		name?: string;
 		message?: string | ((answers: T, config: Record<string, unknown>) => string);
-		default?: string | number | boolean | [] | ((answers: any) => string);
+		default?: string | number | boolean | [] | ((answers: T, config: Record<string, unknown>) => string);
 
 		/**
 		 * The prefix of the `message`.

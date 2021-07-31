@@ -1,10 +1,10 @@
 ---
-to: .codegen/generated/Controllers/<%=name%>Controller.php
+to: .codegen/generated/Controllers/<%=controllerName%>Controller.php
 force: true
 ---
 <?php
 
-class <%=name%>Controller <%=interfaces ? `implements ${interfaces}` : null%> {
+class <%=controllerName%>Controller <%=interfaces ? `implements ${interfaces}` : null%> {
 <% if (interface_methods) { %>
 <%-interface_methods%>
 <% } %>

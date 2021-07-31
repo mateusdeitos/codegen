@@ -1,6 +1,6 @@
 import { Answers } from "inquirer";
 import { Config } from "../Config";
-import { Prompt } from "../Script/types";
+import { Prompt } from "./types";
 
 export abstract class BasePrompt {
 	protected type: Prompt.PromptQuestion["type"];
@@ -103,9 +103,12 @@ export abstract class BasePrompt {
 
 	public parseMethods(config: Config) {
 		this.parseValidate(config);
+		this.parseWhen(config);
+		this.parseFilter(config);
+		this.parseDefault(config);
 	}
 
-	public parseValidate(config: Config) {
+	private parseValidate(config: Config) {
 		if (this.hasValidate()) {
 			const clone = this.validate;
 			return this.setValidate((input: string, answers: Answers) => {
@@ -116,7 +119,7 @@ export abstract class BasePrompt {
 		this.setValidate(null);
 	}
 
-	public parseWhen(config: Config) {
+	private parseWhen(config: Config) {
 		if (this.hasWhen()) {
 			const clone = this.when;
 			return this.setWhen((answers: Answers) => {
@@ -127,7 +130,7 @@ export abstract class BasePrompt {
 		this.setWhen(null);
 	}
 
-	public parseFilter(config: Config) {
+	private parseFilter(config: Config) {
 		if (this.hasFilter()) {
 			const clone = this.filter;
 			return this.setFilter((input, answers: Answers) => {
@@ -136,6 +139,15 @@ export abstract class BasePrompt {
 		}
 
 		this.setFilter(null);
+	}
+
+	private parseDefault(config: Config) {
+		if (this.hasDefault() && typeof this.default === 'function') {
+			const clone = this.default;
+			return this.setDefault((answers: Answers) => {
+				return clone(answers, config.getConfig());
+			});
+		}
 	}
 
 	public setWhen(when: Prompt.PromptQuestion["when"]) {
@@ -179,5 +191,7 @@ export abstract class BasePrompt {
 		if (this.hasWhen()) Object.assign(prompt, { when: this.getWhen() });
 		return prompt;
 	}
+
+	public abstract isValid(): boolean;
 
 }
