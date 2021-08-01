@@ -35,8 +35,7 @@ export class Script {
 		}
 
 		this.config.extend({
-			beforeParseAnswers: null,
-			afterParseAnswers: null,
+			onParseAllAnswers: null,
 			...codeGen.getConfig(),
 		} as ScriptConfig);
 
@@ -118,14 +117,6 @@ export class Script {
 
 	public parseAnswers(answers: Answers): Answers {
 		let parsedAnswers = answers;
-		if (this.config.hasCallback('beforeParseAnswers')) {
-			const beforeParseAnswers = this.config.get('beforeParseAnswers');
-			const parsedAnswersCallbackBefore = beforeParseAnswers(parsedAnswers, this.config.getConfig());
-			parsedAnswers = {
-				...parsedAnswers,
-				...parsedAnswersCallbackBefore,
-			};
-		}
 
 		const parsers = this.getParsers();
 		Object.entries(parsedAnswers).forEach(([key, value]) => {
@@ -140,9 +131,9 @@ export class Script {
 			parsedAnswers[key] = parsedAnswer;
 		});
 
-		if (this.config.hasCallback('afterParseAnswers')) {
-			const afterParseAnswers = this.config.get('afterParseAnswers');
-			const parsedAnswersCallbackAfter = afterParseAnswers(parsedAnswers, this.config.getConfig());
+		if (this.config.hasCallback('onParseAllAnswers')) {
+			const onParseAllAnswers = this.config.get('onParseAllAnswers');
+			const parsedAnswersCallbackAfter = onParseAllAnswers(parsedAnswers, this.config.getConfig());
 			parsedAnswers = {
 				...parsedAnswers,
 				...parsedAnswersCallbackAfter,
@@ -159,8 +150,8 @@ export class Script {
 	public getTemplates() {
 		if (!this.templates.length) {
 			throw new Error(`Nenhuma template encontrada ou informada, você precisa:
-				- Adicionar templates à instância CodeGen utilizando o método 'addTemplate()';
-				- Cria uma pasta 'templates' no diretório do script.`);
+				Adicionar templates à instância CodeGen utilizando o método 'addTemplate()', ou
+				Criar uma pasta 'templates' no diretório do script.`);
 		};
 
 		return this.templates;
