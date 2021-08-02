@@ -11,10 +11,16 @@ export class TemplateResolver {
 
 	constructor(private templates: Template[]) { }
 
-	private parseAnswersToArgv(answers: Answers = {}) {
-		return Object.entries(answers).map(([key, val]) => ["--" + key, val]).reduce((acc, current) => {
-			const [key, val] = current;
-			return [...acc, key, val]
+	private parseAnswersToArgv(answers: Answers = {}, prefix = "") {
+		return Object.entries(answers).reduce((acc, currentAnswer) => {
+            const [answerName, answerValue] = currentAnswer;
+			if (typeof answerValue === 'object') {
+				return [...acc, ...this.parseAnswersToArgv(answerValue, answerName)];
+			}
+
+			const _prefix = prefix ? `${prefix}_` : "";
+
+            return [...acc, `--${_prefix}${answerName}`, answerValue];
 		}, []);
 	}
 
