@@ -56,6 +56,7 @@ export class CodeGen {
 		}
 
 		this.templates.push(template);
+		return this;
 	}
 
 	public static clone(instance: CodeGen) {
