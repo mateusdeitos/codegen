@@ -1,14 +1,12 @@
 // const { Template } = require('simple-codegen');
 const { Template, CodeGen } = require('../../../dist');
-const { resolve } = require('path');
 const codeGenController = require('../Controller/codegen');
 const codeGenView = require('../View/codegen');
 
-const codeGen = CodeGen.clone(codeGenController)
+const codeGen = CodeGen.combine(codeGenController, codeGenView);
 
-codeGen.addTemplate(new Template(resolve(__dirname, '..', 'Controller', 'templates')));
-codeGen.addTemplate(new Template(resolve(__dirname, '..', 'View', 'templates')));
+codeGen.addTemplate(new Template(__dirname, '..', 'Controller', 'templates'));
+codeGen.addTemplate(new Template(__dirname, '..', 'View', 'templates'));
 
-codeGenView.getPrompts().map(prompt => codeGen.addPrompt(prompt));
 
 module.exports = codeGen;

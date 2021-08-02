@@ -66,6 +66,24 @@ export class CodeGen {
 		);
 	}
 
+	public patch(instance: CodeGen) {
+		Object.entries(instance).forEach(([key, value]) => {
+			if (key in this) {
+				this[key] = Array.isArray(this[key])
+					? [...this[key], ...value]
+					: { ...this[key], ...value };
+			}
+		})
+	}
+
+	public static combine(...instances: CodeGen[]) {
+		const result = new CodeGen();
+
+		instances.forEach(instance => result.patch(instance));
+
+		return result;
+	}
+
 }
 
 

@@ -24,7 +24,9 @@ export abstract class BasePrompt {
 	}
 
 	public getName() {
-		return this.name;
+		const suffix = this.suffix ?? "";
+		const prefix = this.prefix ?? "";
+		return `${prefix}${this.name}${suffix}`;
 	}
 
 	public getType() {
@@ -185,8 +187,6 @@ export abstract class BasePrompt {
 		if (this.hasDefault()) Object.assign(prompt, { default: this.getDefault() });
 		if (this.hasParser()) Object.assign(prompt, { parser: this.getParser() });
 		if (this.hasValidate()) Object.assign(prompt, { validate: this.getValidate() });
-		if (this.hasPrefix()) Object.assign(prompt, { prefix: this.getPrefix() });
-		if (this.hasSuffix()) Object.assign(prompt, { suffix: this.getSuffix() });
 		if (this.hasFilter()) Object.assign(prompt, { filter: this.getFilter() });
 		if (this.hasWhen()) Object.assign(prompt, { when: this.getWhen() });
 		return prompt;
