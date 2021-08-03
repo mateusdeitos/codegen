@@ -1,6 +1,6 @@
 import inquirer from 'inquirer';
 import { Script } from '../Script';
-import { TemplateResolver } from '../Script/TemplateResolver';
+import { TemplateResolver } from '../TemplateResolver';
 import { Logger, runner as hygen } from 'hygen';
 
 export class Runner {

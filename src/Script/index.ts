@@ -5,7 +5,7 @@ import { resolve } from 'path';
 import { Prompt } from '../Prompt/types';
 import { Answers } from 'inquirer';
 import { InitialConfig } from '../Config/InitialConfig';
-import { TemplateResolver } from './TemplateResolver';
+import { TemplateResolver } from '../TemplateResolver';
 import { BasePrompt } from '../Prompt/BasePrompt';
 import { CodeGen, ScriptConfig } from '../CodeGen';
 import { Template } from '../Template';
