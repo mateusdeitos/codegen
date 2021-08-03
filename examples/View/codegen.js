@@ -1,5 +1,4 @@
-// const { InputPrompt, CodeGen, CheckboxPrompt } = require('simple-codegen');
-const { CodeGen, InputPrompt, CheckboxPrompt } = require('../../../dist');
+const { CodeGen, InputPrompt, CheckboxPrompt } = require('../../dist');
 
 const interfacesMethodsEnum = {
 	ShowProdutoInterface: [

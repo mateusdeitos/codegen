@@ -1,5 +1,5 @@
 ---
-to: .codegen/generated/Views/<%=viewName%>View.php
+to: examples/generated/Views/<%=viewName%>View.php
 force: true
 ---
 <?php

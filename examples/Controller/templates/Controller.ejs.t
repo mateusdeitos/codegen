@@ -1,5 +1,5 @@
 ---
-to: .codegen/generated/Controllers/<%=controllerName%>Controller.php
+to: examples/generated/Controllers/<%=controllerName%>Controller.php
 force: true
 ---
 <?php

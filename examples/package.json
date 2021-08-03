@@ -7,6 +7,6 @@
     "simple-codegen": "^1.0.0"
   },
   "scripts": {
-    "codegen-local": "cd ../ && yarn tsc && node dist/index.js"
+    "codegen-local": "cd ../ && yarn tsc && node dist/index.js rootDir=./examples"
   }
 }

@@ -46,7 +46,7 @@ export class Script {
 
 		this.prompts = codeGen.getPrompts();
 		this.validatePrompts();
-		this.initConfig();
+		this.evalConfigEnums();
 	}
 
 	private validatePrompts() {
@@ -57,11 +57,6 @@ export class Script {
 		if (!this.prompts.every(prompt => prompt.isValid())) {
 			throw new Error("Prompt inválido, os prompts devem ser uma instância de BasePrompt");
 		}
-	}
-
-	private initConfig() {
-		if (!(this.config instanceof Config)) return;
-		this.evalConfigEnums();
 	}
 
 	private evalConfigEnums() {

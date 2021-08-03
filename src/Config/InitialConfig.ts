@@ -7,21 +7,22 @@ let instance: InitialConfig | null = null;
 
 export class InitialConfig extends Config {
 
-	private constructor() {
+	private constructor(config?: Record<string, unknown>) {
 		super();
 
 		this.extend({
 			rootDir: path.join(process.cwd(), '.codegen'),
 			scriptDefaultName: 'codegen.js',
 			cwd: process.cwd(),
+			...config,
 		});
 		this.validate();
 		this.setInstance();
 	}
 
-	public static getInstance() {
+	public static getInstance(config?: Record<string, unknown>) {
 		if (!(instance instanceof InitialConfig)) {
-			instance = new InitialConfig();
+			instance = new InitialConfig(config);
 		}
 		return instance;
 	}

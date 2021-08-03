@@ -1,5 +1,4 @@
-// const { Template } = require('simple-codegen');
-const { Template, CodeGen } = require('../../../dist');
+const { Template, CodeGen } = require('../../dist');
 const codeGenController = require('../Controller/codegen');
 const codeGenView = require('../View/codegen');
 

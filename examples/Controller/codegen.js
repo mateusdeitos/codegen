@@ -1,5 +1,4 @@
-// const { InputPrompt, CodeGen, CheckboxPrompt } = require('simple-codegen');
-const { CodeGen, InputPrompt, CheckboxPrompt, Template } = require('../../../dist');
+const { CodeGen, InputPrompt, CheckboxPrompt } = require('../../dist');
 
 const interfacesMethodsEnum = {
 	ShowProdutoInterface: [
@@ -46,12 +45,13 @@ codeGen
 				}
 			}
 
+			// Retorna um objeto que será feito 'merge' no objeto answers antes de aplicá-lo na template
 			return {
 				interfaces: "",
 				interface_methods: ""
 			};
 		},
-		enums: { ...interfacesMethodsEnum, teste: ".codegen/examples/Controller/testeEnum.php" }
+		enums: { ...interfacesMethodsEnum }
 	})
 
 module.exports = codeGen;
