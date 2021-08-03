@@ -1,65 +1,22 @@
 # Exemplo Sem nenhum Prompt
 
-Esse exemplo demonstra como criar um script para gerar o código de uma classe em PHP
+Esse exemplo demonstra como criar um script sem nenhum prompt. Nesse cenário, as constantes de uma classe em PHP são convertidas para um objeto JS que será aplicado na template dentro desse diretório.
 
+Isso pode ser útil quando for preciso criar arquivos durante a execução de uma action no GitHub, por exemplo.
 
 ```js
-const { CodeGen, InputPrompt, CheckboxPrompt } = require('../../dist');
+const { CodeGen } = require('../../dist');
 
-const interfacesMethodsEnum = {
-	ShowProdutoInterface: [
-		'show($id)',
-		'index()'
-	],
-	CreateProdutoInterface: [
-		'create(ProdutoDTO $produto)'
-	],
-	UpdateProdutoInterface: [
-		'update(int $id, ProdutoDTO $produto)'
-	],
-	DeleteProdutoInterface: [
-		'delete(int $id)'
-	]
-};
-
-const codeGen = new CodeGen();
-
-codeGen.setPrompts([
-	new InputPrompt('controllerName', 'Qual é o nome do controller?'),
-	new CheckboxPrompt('interfaces', 'Defina as interfaces que o controller irá implementar').setChoices(Object.entries(interfacesMethodsEnum).map(([interface, methods]) => {
-		return {
-			name: interface,
-			value: {
-				methods,
-				interface,
-			},
-		}
-	}))
-])
-
-codeGen
-	.setConfig({
-		onParseAllAnswers: (answers, config) => {
-			if (answers.interfaces && Array.isArray(answers.interfaces)) {
-				const convertMethod = (method) => {
-					return `\tpublic function ${method} {\n\t\treturn "";\n\t}`;
-				}
-
-				return {
-					interface_methods: [...answers.interfaces.map(({ methods }) => methods)].map(convertMethod).join('\n'),
-					interfaces: answers.interfaces.map(({ interface }) => interface).join(", ")
-				}
-			}
-
-			// Retorna um objeto que será feito 'merge' no objeto answers antes de aplicá-lo na template
-			return {
-				interfaces: "",
-				interface_methods: ""
-			};
-		},
-		enums: { ...interfacesMethodsEnum } // Todos objetos passados aqui serão passados aos parsers dos prompts e ao parse de todo objeto de answers dentro do param 'config'
+const codeGen = new CodeGen().setConfig({
+	enums: {
+		Teste: "examples/NoPromptsAsked/testeEnum.php"
+	},
+	onParseAllAnswers: (_, config) => ({
+		objeto: JSON.stringify(config.enums.Teste, null, 2)
 	})
+})
 
 module.exports = codeGen;
+
 
 ```
