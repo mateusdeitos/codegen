@@ -39,7 +39,7 @@ export const parse = {
 		return result;
 	},
 
-	phpEnum: (phpFile = "") => {
+	phpEnum: (phpFile = "", config: Record<string, unknown> = {}) => {
 		if (!existsSync(phpFile)) {
 			return null;
 		}
@@ -73,6 +73,10 @@ export const parse = {
 
 		try {
 			const parsed = phpParser.parseCode(readFileSync(phpFile, 'utf8'));
+			if (config.returnRawPhpFile) {
+				return parsed;
+			}
+
 			const constants = getClassConstants(parsed);
 			if (!constants || !Array.isArray(constants)) {
 				throw new Error("Invalid parsing result");

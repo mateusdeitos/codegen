@@ -66,7 +66,7 @@ export class Script {
 			if (typeof v === 'function') {
 				parsedEnums[k] = v(this.config.getConfig());
 			} else if (typeof v === 'string' && v.endsWith(".php")) {
-				parsedEnums[k] = parse.phpEnum(resolve(process.cwd(), v));
+				parsedEnums[k] = parse.phpEnum(resolve(process.cwd(), v), this.config.getConfig());
 			} else if (typeof v === 'object') {
 				parsedEnums[k] = v;
 			}
