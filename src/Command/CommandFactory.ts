@@ -7,7 +7,7 @@ export type CommandType = CommandInterface;//(runner: Runner) => Promise<void>;
 export class CommandFactory {
 
 	private static commands: Commands = {
-		[NewTemplateCommand.command]: new NewTemplateCommand()
+		[new NewTemplateCommand().getCommandName()]: new NewTemplateCommand()
 	};
 
 	public static getCommand(command: string): CommandInterface | undefined  {

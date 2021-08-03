@@ -5,7 +5,11 @@ import { Runner } from '../Runner';
 import { CommandInterface } from './CommandInterface';
 
 export class NewTemplateCommand implements CommandInterface {
-	public static command = 'new:template';
+	private command = 'new:template';
+
+	public getCommandName(): string {
+		return this.command;
+	}
 
 	private getPrompts() {
 		return [

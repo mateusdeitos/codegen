@@ -6,4 +6,5 @@ export type Commands = Record<string, CommandType>;
 
 export interface CommandInterface {
 	run(runner: Runner): Promise<void>;
+	getCommandName(): string;
 }
