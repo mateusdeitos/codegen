@@ -9,31 +9,32 @@ export class TemplateResolver {
 
 	public static templatesFolder = "templates";
 
-	constructor(private templates: Template[]) { }
+	constructor(private templates: Template[]) {}
 
-	private parseAnswersToArgv(answers: Answers = {}, prefix = "") {
-		return Object.entries(answers).reduce((acc, currentAnswer) => {
-            const [answerName, answerValue] = currentAnswer;
-			if (typeof answerValue === 'object') {
-				return [...acc, ...this.parseAnswersToArgv(answerValue, answerName)];
-			}
+	private parseArgvToHygen(argv: string[], hygenAction: string) {
+		if (!Array.isArray(argv) || argv.length === 0) {
+			throw new Error("Os parâmetros a serem aplicados na template devem ser informados como um array de string, se você está passando um 'customAnswersParser', verifique o retorno dele.");
+		}
 
-			const _prefix = prefix ? `${prefix}_` : "";
+		const isEven = number => number % 2 === 0;
 
-            return [...acc, `--${_prefix}${answerName}`, answerValue];
-		}, []);
+		// adiciona '--' antes de todas as chaves, pois o hygen espera dessa forma
+		const parsed = argv.map((arg, index) => isEven(index) ? `--${arg}` : arg);
+
+		parsed.unshift(TemplateResolver.templatesFolder);
+		parsed.unshift(hygenAction);
+
+		return parsed;
 	}
 
 	public async applyAnswers(answers: Answers, runner: TemplatesRunnerType) {
 		const paths = [];
 
 		for await (const template of this.templates) {
+			if (!template.shouldCreateFile(answers)) continue;
 			const templatesPath = template.getPath();
 			const [hygenAction] = resolve(templatesPath, '..').split(sep).reverse();
-			const argv = this.parseAnswersToArgv(answers);
-			argv.unshift(TemplateResolver.templatesFolder);
-			argv.unshift(hygenAction);
-
+			const argv = this.parseArgvToHygen(template.parseAnswers(answers), hygenAction);
 			const result = await runner(argv, resolve(templatesPath, '..', '..'));
 
 			if (!result.success) {
@@ -43,7 +44,6 @@ export class TemplateResolver {
 			paths.push(...result.actions.map(({ subject }) => subject))
 
 		}
-
 
 		return {
 			paths

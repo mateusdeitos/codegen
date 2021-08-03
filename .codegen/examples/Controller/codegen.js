@@ -1,5 +1,5 @@
 // const { InputPrompt, CodeGen, CheckboxPrompt } = require('simple-codegen');
-const { CodeGen, InputPrompt, CheckboxPrompt } = require('../../../dist');
+const { CodeGen, InputPrompt, CheckboxPrompt, Template } = require('../../../dist');
 
 const interfacesMethodsEnum = {
 	ShowProdutoInterface: [
@@ -32,25 +32,26 @@ codeGen.setPrompts([
 	}))
 ])
 
-codeGen.setConfig({
-	onParseAllAnswers: (answers, config) => {
-		if (answers.interfaces && Array.isArray(answers.interfaces)) {
-			const convertMethod = (method) => {
-				return `\tpublic function ${method} {\n\t\treturn "";\n\t}`;
+codeGen
+	.setConfig({
+		onParseAllAnswers: (answers, config) => {
+			if (answers.interfaces && Array.isArray(answers.interfaces)) {
+				const convertMethod = (method) => {
+					return `\tpublic function ${method} {\n\t\treturn "";\n\t}`;
+				}
+
+				return {
+					interface_methods: [...answers.interfaces.map(({ methods }) => methods)].map(convertMethod).join('\n'),
+					interfaces: answers.interfaces.map(({ interface }) => interface).join(", ")
+				}
 			}
 
 			return {
-				interface_methods: [...answers.interfaces.map(({ methods }) => methods)].map(convertMethod).join('\n'),
-				interfaces: answers.interfaces.map(({ interface }) => interface).join(", ")
-			}
-		}
-
-		return {
-			interfaces: "",
-			interface_methods: ""
-		};
-	},
-	enums: { ...interfacesMethodsEnum, teste: ".codegen/examples/Controller/testeEnum.php" }
-})
+				interfaces: "",
+				interface_methods: ""
+			};
+		},
+		enums: { ...interfacesMethodsEnum, teste: ".codegen/examples/Controller/testeEnum.php" }
+	})
 
 module.exports = codeGen;
