@@ -5,7 +5,7 @@ const codeGenView = require('../View/codegen');
 
 const codeGen = CodeGen.combine(codeGenController, codeGenView);
 
-codeGen.addTemplate(new Template(__dirname, '..', 'Controller', 'templates'));
+codeGen.addTemplate(new Template(__dirname, '..', 'Controller', 'templates').setConditionToCreate(answers => answers["controllerName"] !== "Teste"));
 codeGen.addTemplate(new Template(__dirname, '..', 'View', 'templates'));
 
 
