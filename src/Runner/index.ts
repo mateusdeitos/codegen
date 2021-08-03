@@ -1,29 +1,52 @@
-import inquirer from 'inquirer';
+import inquirer, { Answers } from 'inquirer';
 import { Script } from '../Script';
-import { TemplateResolver } from '../TemplateResolver';
+import { TemplateResolver, TemplatesRunnerType } from '../TemplateResolver';
 import { Logger, runner as hygen } from 'hygen';
+import { Prompt } from '../Prompt/types';
+import { CommandInterface } from '../Command/CommandInterface';
+import { Template } from '../Template';
 
 export class Runner {
 
-	constructor(private script: Script) { }
+	constructor(private resolvedAction: Script | CommandInterface) { }
 
 	public async run() {
-		console.log(`running file ${this.script.getScriptPath()}`);
-		const scriptConfig = this.script.getConfig();
+		if (this.resolvedAction instanceof Script) {
+			return this.runScript(this.resolvedAction);
+		} else {
+			return this.runCommand(this.resolvedAction);
+		}
+	}
+
+	public async askPrompts(prompts: Prompt.PromptQuestion[]) {
+		return inquirer.prompt(prompts);
+	}
+
+	private async runCommand(command: CommandInterface) {
+		return command.run(this);
+	}
+
+	private async runScript(script: Script) {
+		console.log(`running file ${script.getScriptPath()}`);
+		const scriptConfig = script.getConfig();
 		const answersFromCLIArgs = scriptConfig.has('answers') ? scriptConfig.get('answers') : {};
 
-		const prompts = this.script.getPrompts().filter(prompt => !(prompt.name in answersFromCLIArgs));
+		const prompts = script.getPrompts().filter(prompt => !(prompt.name in answersFromCLIArgs));
 
-		const answersFromPrompts = await inquirer.prompt(prompts);
-		const parsedAnswers = this.script.parseAnswers({
+		const answersFromPrompts = await this.askPrompts(prompts);
+		const parsedAnswers = script.parseAnswers({
 			...answersFromCLIArgs,
 			...answersFromPrompts
 		});
-		const template = new TemplateResolver(this.script.getTemplates());
-		await template.applyAnswers(parsedAnswers, this.getRunner());
+		await this.createFiles(script.getTemplates(), parsedAnswers, this.getRunner());
 	}
 
-	private getRunner() {
+	public async createFiles(templates: Template[], answers: Answers, runner: TemplatesRunnerType) {
+		const template = new TemplateResolver(templates);
+		await template.applyAnswers(answers, runner);
+	}
+
+	public getRunner() {
 		return async (argv: string[], templatesPath: string) => {
 			return await hygen(argv, {
 				templates: templatesPath,

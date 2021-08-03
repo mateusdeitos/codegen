@@ -15,8 +15,8 @@ import { Template } from './Template/index';
 		const initialConfig = InitialConfig.getInstance(config);
 		initialConfig.extend({ answers });
 		const resolver = new ConfigResolver(initialConfig);
-		const ChosenScript = await resolver.resolve();
-		const runner = new Runner(ChosenScript);
+		const ResolvedAction = await resolver.resolve();
+		const runner = new Runner(ResolvedAction);
 		await runner.run();
 	} catch (error) {
 		console.error(error?.message || error);

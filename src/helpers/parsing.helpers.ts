@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'fs';
 import Engine from 'php-parser';
+import { CommandFactory } from '../Command/CommandFactory';
 import { file } from './file.helpers';
 
 export const parse = {
@@ -34,6 +35,11 @@ export const parse = {
 			if (success) {
 				result.config = { ...result.config, ...config };
 			}
+		}
+
+		const command = CommandFactory.getCommandFromArgs(_args);
+		if (command) {
+			result.config = { ...result.config, command };
 		}
 
 		return result;
