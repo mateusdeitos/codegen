@@ -24,7 +24,8 @@ const findFileNameRecursive = (baseDir: string, fileName: string): string[] => {
 }
 
 const resolvePath = (filePath: string, cwd: string = process.cwd()): string => {
-	return path.join(cwd, filePath);
+	const _filePath = filePath.replace(cwd, "");
+	return path.join(cwd, _filePath);
 }
 
 /**

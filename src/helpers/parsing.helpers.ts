@@ -4,6 +4,7 @@ import { file } from './file.helpers';
 
 export const parse = {
 	argumentsToObject: async (_args: string[] = []) => {
+		const isPath = str => str.indexOf('/') !== -1;
 		let result = {
 			answers: {},
 			config: {},
@@ -11,7 +12,7 @@ export const parse = {
 
 		let configPath = "";
 
-		_args.forEach((arg: string) => {
+		_args.slice(2).forEach((arg: string) => {
 			const argParts = arg.split('=');
 			if (argParts.length === 2) {
 				const [key, value] = argParts;
@@ -26,6 +27,8 @@ export const parse = {
 				}
 
 				result.config[key] = value;
+			} else if (isPath(argParts[0])) {
+				result.config["scriptPath"] = arg;
 			}
 		});
 

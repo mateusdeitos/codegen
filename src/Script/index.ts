@@ -9,6 +9,8 @@ import { TemplateResolver } from '../TemplateResolver';
 import { BasePrompt } from '../Prompt/BasePrompt';
 import { CodeGen, ScriptConfig } from '../CodeGen';
 import { Template } from '../Template';
+import { file } from '../helpers/file.helpers';
+import { join } from 'path';
 
 export class Script {
 
@@ -20,7 +22,10 @@ export class Script {
 	constructor(scriptPath: string) {
 		let codeGen = null;
 		this.config = InitialConfig.getInstance();
-		this.scriptPath = scriptPath;
+		this.scriptPath = file.resolvePath(scriptPath, this.config.get("cwd"));
+		if (!this.scriptPath.endsWith(this.config.get("scriptDefaultName"))) {
+			this.scriptPath = join(this.scriptPath, "codegen.js");
+		}
 
 		if (existsSync(this.scriptPath)) {
 			codeGen = require(this.scriptPath);
