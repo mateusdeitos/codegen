@@ -10,7 +10,8 @@
 		"codegen": "./dist/index.js"
 	},
 	"scripts": {
-		"build": "yarn tsc"
+		"build": "yarn tsc",
+		"codegen": "yarn tsc && node dist/index.js rootDir=./examples/"
 	},
 	"license": "MIT",
 	"dependencies": {

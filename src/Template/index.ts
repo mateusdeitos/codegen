@@ -4,7 +4,7 @@ import { Answers } from 'inquirer';
 export class Template {
 	private path: string;
 	private answersParser = null;
-	private condition = _ => true;
+	private condition = (_: Answers) => true;
 
 	/**
 	 * @param {String} path - The path of the template relative to the project root
@@ -14,14 +14,18 @@ export class Template {
 
 		const answersParser = (answers: Answers = {}, prefix = "") => {
 			return Object.entries(answers).reduce((acc, currentAnswer) => {
-				const [answerName, answerValue] = currentAnswer;
-				if (typeof answerValue === 'object') {
-					return [...acc, ...answersParser(answerValue, answerName)];
+				const [answerName, value] = currentAnswer;
+				const _prefix = prefix ? `${prefix}_` : "";
+				const key = `${_prefix}${answerName}`;
+
+				if (typeof value === 'object') {
+					if (Array.isArray(value)) {
+						acc.push(...[`${key}_count`, value.length]);
+					}
+					return [...acc, ...answersParser(value, key)];
 				}
 
-				const _prefix = prefix ? `${prefix}_` : "";
-
-				return [...acc, `${_prefix}${answerName}`, answerValue];
+				return [...acc, key, value];
 			}, []);
 		}
 
