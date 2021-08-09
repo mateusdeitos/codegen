@@ -5,6 +5,7 @@ import { BasePrompt } from "../Prompt/BasePrompt";
 export type ScriptConfigEnums = Array<Record<string, string | number | boolean> | string>;
 export type ScriptConfig = {
 	onParseAllAnswers?: (answers: Answers, config: Record<string, unknown>) => Answers;
+	onFilesCalled?: (files: Array<string>, config: Record<string, unknown>) => Array<string>;
 	enums?: ScriptConfigEnums | Record<string, ScriptConfigEnums>;
 } & Record<string, unknown>;
 
