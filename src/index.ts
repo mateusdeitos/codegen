@@ -7,7 +7,8 @@ import { CheckboxPrompt } from './Prompt/CheckboxPrompt';
 import { ListPrompt } from './Prompt/ListPrompt';
 import { InputPrompt } from './Prompt/InputPrompt';
 import { CodeGen } from './CodeGen';
-import { Template } from './Template/index';
+import { Template } from './Template';
+import { Step } from './Step';
 
 (async () => {
 	try {
@@ -28,5 +29,6 @@ export {
 	ListPrompt,
 	InputPrompt,
 	CodeGen,
-	Template
+	Template,
+	Step
 }

@@ -12,12 +12,18 @@ export class Runner {
 		const scriptConfig = this.script.getConfig();
 		const answersFromCLIArgs = scriptConfig.has('answers') ? scriptConfig.get('answers') : {};
 
-		const prompts = this.script.getPrompts().filter(prompt => !(prompt.name in answersFromCLIArgs));
+		const prompts = this.script.getPrompts(null).filter(prompt => !(prompt.name in answersFromCLIArgs));
 
-		const answersFromPrompts = await inquirer.prompt(prompts);
+		let answers = await inquirer.prompt(prompts);
+		while (this.script.hasNextStep()) {
+			const prompts = this.script.getNextStep().getPrompts(answers, scriptConfig.getConfig());
+			const stepAnswers = await inquirer.prompt(prompts);
+			answers = Object.assign(answers, stepAnswers);
+		}
+
 		const parsedAnswers = this.script.parseAnswers({
 			...answersFromCLIArgs,
-			...answersFromPrompts
+			...answers
 		});
 		const template = new TemplateResolver(this.script.getTemplates());
 		await template.applyAnswers(parsedAnswers, this.getRunner());

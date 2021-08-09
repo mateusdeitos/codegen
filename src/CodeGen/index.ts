@@ -1,6 +1,7 @@
 import { Answers } from "inquirer";
 import { Template } from "../Template";
 import { BasePrompt } from "../Prompt/BasePrompt";
+import { Step } from "../Step";
 
 export type ScriptConfigEnums = Array<Record<string, string | number | boolean> | string>;
 export type ScriptConfig = {
@@ -10,11 +11,11 @@ export type ScriptConfig = {
 
 export class CodeGen {
 
-	constructor(
-		private prompts: BasePrompt[] = [],
-		private config: ScriptConfig = {},
-		private templates: Template[] = []
-	) { }
+	private prompts: BasePrompt[] = [];
+	private steps: Step[] = [];
+	private templates: Template[] = [];
+
+	constructor(private config: ScriptConfig = {}) { }
 
 	public getConfig(): ScriptConfig {
 		return this.config;
@@ -31,6 +32,19 @@ export class CodeGen {
 
 		this.prompts.push(prompt);
 		return this;
+	}
+
+	public addStep(step: Step) {
+		if (!(step instanceof Step)) {
+			throw new Error("Invalid step");
+		}
+
+		this.steps.push(step);
+		return this;
+	}
+
+	public getSteps(): Step[] {
+		return this.steps;
 	}
 
 	public setPrompts(prompts: BasePrompt[]) {
@@ -59,12 +73,16 @@ export class CodeGen {
 		return this;
 	}
 
+	public setTemplates(templates: Template[]) {
+		templates.forEach(template => this.addTemplate(template));
+		return this;
+	}
+
 	public static clone(instance: CodeGen) {
-		return new CodeGen(
-			instance.getPrompts(),
-			instance.getConfig(),
-			instance.getTemplates()
-		);
+		const codeGen = new CodeGen(instance.getConfig());
+		codeGen.setPrompts(instance.getPrompts());
+		codeGen.setTemplates(instance.getTemplates());
+		return codeGen;
 	}
 
 	public patch(instance: CodeGen) {

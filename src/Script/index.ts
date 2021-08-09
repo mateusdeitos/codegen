@@ -11,13 +11,15 @@ import { CodeGen, ScriptConfig } from '../CodeGen';
 import { Template } from '../Template';
 import { file } from '../helpers/file.helpers';
 import { join } from 'path';
+import { Step } from '../Step';
 
 export class Script {
 
 	private config: Config;
-	private prompts: BasePrompt[];
+	private steps: Step[];
 	private scriptPath: string;
 	private templates: Template[];
+	private currentStep = 0;
 
 	constructor(scriptPath: string) {
 		let codeGen = null;
@@ -48,19 +50,18 @@ export class Script {
 		if (this.templates.length === 0) {
 			this.templates.push(new Template(resolve(this.scriptPath, '..', TemplateResolver.templatesFolder)))
 		}
+		this.steps = codeGen.getSteps();
+		if (this.steps.length === 0) {
+			this.steps.push(new Step(codeGen.getPrompts()))
+		}
 
-		this.prompts = codeGen.getPrompts();
-		this.validatePrompts();
+		this.validate();
 		this.evalConfigEnums();
 	}
 
-	private validatePrompts() {
-		if (!this.prompts.every(prompt => prompt instanceof BasePrompt)) {
-			throw new Error("Prompt inválido, os prompts devem ser uma instância de BasePrompt");
-		}
-
-		if (!this.prompts.every(prompt => prompt.isValid())) {
-			throw new Error("Prompt inválido, os prompts devem ser uma instância de BasePrompt");
+	private validate() {
+		if (!this.steps.every(step => step instanceof Step)) {
+			throw new Error("Step inválido, todos os steps devem ser uma instância de Step");
 		}
 	}
 
@@ -84,12 +85,22 @@ export class Script {
 		return this.config;
 	};
 
-	public getPrompts = () => {
-		return this.parsePrompts(this.prompts);
+	public getPrompts = (answers) => {
+		return this.parsePrompts(this.getCurrentPrompts(answers));
 	};
 
-	public setPrompts(prompts: BasePrompt[]) {
-		this.prompts = prompts;
+	public hasNextStep() {
+		return this.currentStep < this.steps.length - 1;
+	}
+
+	public getNextStep() {
+		this.currentStep++;
+		const step = this.steps[this.currentStep];
+		return step;
+	}
+
+	private getCurrentPrompts(answers) {
+		return this.steps[this.currentStep].getPrompts(answers, this.config.getConfig());
 	}
 
 	public setConfig(config: Config) {
@@ -105,8 +116,8 @@ export class Script {
 		});
 	}
 
-	private getParsers(): Record<string, Prompt.Parser> {
-		return this.prompts.reduce((acc, prompt) => {
+	private getParsers(answers): Record<string, Prompt.Parser> {
+		return this.getCurrentPrompts(answers).reduce((acc, prompt) => {
 			if (prompt.hasParser()) {
 				return { ...acc, [prompt.getName()]: prompt.getParser() };
 			}
@@ -118,7 +129,7 @@ export class Script {
 	public parseAnswers(answers: Answers): Answers {
 		let parsedAnswers = answers;
 
-		const parsers = this.getParsers();
+		const parsers = this.getParsers(answers);
 		Object.entries(parsedAnswers).forEach(([key, value]) => {
 			let parsedAnswer = value;
 			const parser = parsers[key];
