@@ -9,6 +9,7 @@ import { InputPrompt } from './Prompt/InputPrompt';
 import { CodeGen } from './CodeGen';
 import { Template } from './Template';
 import { Step } from './Step';
+import { InquirerPromptProvider } from './Providers/PromptProvider/implementations/InquirerPromptProvider';
 
 (async () => {
 	try {
@@ -17,7 +18,7 @@ import { Step } from './Step';
 		initialConfig.extend({ answers });
 		const resolver = new ConfigResolver(initialConfig);
 		const ChosenScript = await resolver.resolve();
-		const runner = new Runner(ChosenScript);
+		const runner = new Runner(ChosenScript, new InquirerPromptProvider());
 		await runner.run();
 	} catch (error) {
 		console.error(error?.message || error);

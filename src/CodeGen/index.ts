@@ -80,8 +80,7 @@ export class CodeGen {
 
 	public static clone(instance: CodeGen) {
 		const codeGen = new CodeGen(instance.getConfig());
-		codeGen.setPrompts(instance.getPrompts());
-		codeGen.setTemplates(instance.getTemplates());
+		codeGen.patch(instance);
 		return codeGen;
 	}
 

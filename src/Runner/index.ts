@@ -1,32 +1,37 @@
-import inquirer from 'inquirer';
 import { Script } from '../Script';
 import { TemplateResolver } from '../TemplateResolver';
 import { Logger, runner as hygen } from 'hygen';
+import { Step } from '../Step';
+import { IPromptProvider } from 'src/Providers/PromptProvider/IPromptProvider';
 
 export class Runner {
 
-	constructor(private script: Script) { }
+	constructor(private script: Script, private PromptProvider: IPromptProvider) { }
 
 	public async run() {
 		console.log(`running file ${this.script.getScriptPath()}`);
 		const scriptConfig = this.script.getConfig();
 		const answersFromCLIArgs = scriptConfig.has('answers') ? scriptConfig.get('answers') : {};
 
-		const prompts = this.script.getPrompts(null).filter(prompt => !(prompt.name in answersFromCLIArgs));
+		let answers = {};
+		let step: Step;
+		while (step = this.script.getNextStep()) {
+			step.setAnswers(answers);
+			step.setConfig(scriptConfig.getConfig());
+			const prompts = step.getPrompts().filter(prompt => !(prompt.getName() in answersFromCLIArgs));
+			const stepAnswers = await this.PromptProvider.askPrompts(prompts);
 
-		let answers = await inquirer.prompt(prompts);
-		while (this.script.hasNextStep()) {
-			const prompts = this.script.getNextStep().getPrompts(answers, scriptConfig.getConfig());
-			const stepAnswers = await inquirer.prompt(prompts);
-			answers = Object.assign(answers, stepAnswers);
+			answers = this.script.parseAnswers(step.getPrompts(), {
+				...answersFromCLIArgs,
+				...answers,
+				...stepAnswers,
+			});
 		}
 
-		const parsedAnswers = this.script.parseAnswers({
-			...answersFromCLIArgs,
-			...answers
-		});
+		answers = await this.script.parseAllAnswers(answers);
+
 		const template = new TemplateResolver(this.script.getTemplates());
-		await template.applyAnswers(parsedAnswers, this.getRunner());
+		await template.applyAnswers(answers, this.getRunner());
 	}
 
 	private getRunner() {

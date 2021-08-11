@@ -50,6 +50,7 @@ export class Script {
 		if (this.templates.length === 0) {
 			this.templates.push(new Template(resolve(this.scriptPath, '..', TemplateResolver.templatesFolder)))
 		}
+
 		this.steps = codeGen.getSteps();
 		if (this.steps.length === 0) {
 			this.steps.push(new Step(codeGen.getPrompts()))
@@ -85,39 +86,33 @@ export class Script {
 		return this.config;
 	};
 
-	public getPrompts = (answers) => {
-		return this.parsePrompts(this.getCurrentPrompts(answers));
+	public getPrompts = () => {
+		return this.parsePrompts(this.getCurrentPrompts());
 	};
 
-	public hasNextStep() {
-		return this.currentStep < this.steps.length - 1;
-	}
-
 	public getNextStep() {
-		this.currentStep++;
 		const step = this.steps[this.currentStep];
+		this.currentStep++;
 		return step;
 	}
 
-	private getCurrentPrompts(answers) {
-		return this.steps[this.currentStep].getPrompts(answers, this.config.getConfig());
+	private getCurrentPrompts() {
+		return this.steps[this.currentStep].getPrompts();
 	}
 
 	public setConfig(config: Config) {
 		this.config = config;
 	}
 
-	private parsePrompts = (prompts: BasePrompt[]) => {
+	private parsePrompts = (prompts: BasePrompt[]): BasePrompt[] => {
 		return prompts.map(prompt => {
 			prompt.parseMethods(this.config);
-			return {
-				...prompt.getPrompt(),
-			};
+			return prompt;
 		});
 	}
 
-	private getParsers(answers): Record<string, Prompt.Parser> {
-		return this.getCurrentPrompts(answers).reduce((acc, prompt) => {
+	private getParsers(prompts: BasePrompt[]): Record<string, Prompt.Parser> {
+		return prompts.reduce((acc, prompt) => {
 			if (prompt.hasParser()) {
 				return { ...acc, [prompt.getName()]: prompt.getParser() };
 			}
@@ -126,32 +121,34 @@ export class Script {
 		}, {})
 	}
 
-	public parseAnswers(answers: Answers): Answers {
+	public parseAnswers(prompts: BasePrompt[], answers: Answers): Answers {
 		let parsedAnswers = answers;
 
-		const parsers = this.getParsers(answers);
+		const parsers = this.getParsers(prompts);
 		Object.entries(parsedAnswers).forEach(([key, value]) => {
 			let parsedAnswer = value;
 			const parser = parsers[key];
 			if (parser) {
 				let result = parser(value, answers, this.config.getConfig());
-				if (typeof result === 'string') {
-					parsedAnswer = result;
-				}
+				parsedAnswer = result;
 			}
 			parsedAnswers[key] = parsedAnswer;
 		});
 
+		return parsedAnswers;
+	}
+
+	public async parseAllAnswers(answers: Answers): Promise<Answers> {
 		if (this.config.hasCallback('onParseAllAnswers')) {
 			const onParseAllAnswers = this.config.get('onParseAllAnswers');
-			const parsedAnswersCallbackAfter = onParseAllAnswers(parsedAnswers, this.config.getConfig());
-			parsedAnswers = {
-				...parsedAnswers,
+			const parsedAnswersCallbackAfter = await onParseAllAnswers(answers, this.config.getConfig());
+			return {
+				...answers,
 				...parsedAnswersCallbackAfter,
 			};
 		}
 
-		return parsedAnswers;
+		return answers;
 	}
 
 	public getScriptPath() {
