@@ -34,8 +34,8 @@ codeGen.setPrompts([
 codeGen.setConfig({
 	onParseAllAnswers: (answers, config) => {
 		if (answers.interfaces && Array.isArray(answers.interfaces)) {
-			const convertMethod = (method) => {
-				return `\tpublic function ${method} {\n\t\treturn "";\n\t}`;
+			const convertMethod = (methods) => {
+				return methods.map(method => `\tpublic function ${method} {\n\t\treturn "";\n\t}`).join("\n");
 			}
 
 			return {

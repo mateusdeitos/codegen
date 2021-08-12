@@ -7,7 +7,9 @@ import { CheckboxPrompt } from './Prompt/CheckboxPrompt';
 import { ListPrompt } from './Prompt/ListPrompt';
 import { InputPrompt } from './Prompt/InputPrompt';
 import { CodeGen } from './CodeGen';
-import { Template } from './Template/index';
+import { Template } from './Template';
+import { Step } from './Step';
+import { InquirerPromptProvider } from './Providers/PromptProvider/implementations/InquirerPromptProvider';
 
 (async () => {
 	try {
@@ -16,7 +18,7 @@ import { Template } from './Template/index';
 		initialConfig.extend({ answers });
 		const resolver = new ConfigResolver(initialConfig);
 		const ChosenScript = await resolver.resolve();
-		const runner = new Runner(ChosenScript);
+		const runner = new Runner(ChosenScript, new InquirerPromptProvider());
 		await runner.run();
 	} catch (error) {
 		console.error(error?.message || error);
@@ -28,5 +30,6 @@ export {
 	ListPrompt,
 	InputPrompt,
 	CodeGen,
-	Template
+	Template,
+	Step
 }
