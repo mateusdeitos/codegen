@@ -166,5 +166,11 @@ export class Script {
 
 	}
 
+	public async onFilesCreated(files: string[]) {
+		if (this.config.hasCallback('onFilesCreated')) {
+			await this.config.get('onFilesCreated')(files, this.config.getConfig());
+		}
+	}
+
 }
 
