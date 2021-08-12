@@ -31,7 +31,7 @@ export class Runner {
 		answers = await this.script.parseAllAnswers(answers);
 
 		const template = new TemplateResolver(this.script.getTemplates());
-		const { paths } = await template.applyAnswers(parsedAnswers, this.getRunner());
+		const { paths } = await template.applyAnswers(answers, this.getRunner());
 		await this.script.onFilesCreated(paths);
 	}
 
